@@ -77,7 +77,7 @@ def findPackages(path, dataExclude=[]):
 # for scheme in INSTALL_SCHEMES.values(): scheme['data'] = scheme['purelib']
 
 long_description = file(os.path.join(pdir(), "README.txt")).read()
-packages, package_data = findPackages("libmproxy")
+packages, package_data = findPackages("astgen")
 
 print "Packages: ", packages
 print "Datafiles: ", package_data
