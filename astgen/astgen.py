@@ -1,5 +1,3 @@
-#!/b
-import os, sys, importlib, imp
 
 class ASTCodeGenerator(object):
     """
@@ -32,6 +30,7 @@ class ASTNode(object):
     a parser for building the AST
     """
     attributes = {}
+
     @classmethod
     def getAllAttributes(cls):
         if not hasattr(cls, "__attrib_table__") or cls.__attrib_table__["cls"] is not cls:
@@ -42,20 +41,4 @@ class ASTNode(object):
             for key,value in cls.attributes.items():
                 cls.__attrib_table__["attributes"][key] = value
         return cls.__attrib_table__["attributes"]
-
-    def getConstructors(self):
-        """
-        Returns all possible constructors for this type of AST Node.   
-        Each "constructor" corresponds on particular production of a rule in the grammar.
-        Eg:
-
-        expr ::=  binary_expressionj
-              |   unary_expression
-
-        would typically have 2 different constructors for the "expr" node.
-        """
-        pass
-
-    def generatePreamble(self):
-        pass
 

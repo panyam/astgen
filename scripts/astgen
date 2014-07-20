@@ -1,9 +1,31 @@
 #!/usr/bin/python
 
-import astgen, os, sys, importlib, imp
+import astgen, os, sys, imp
+from optparse import OptionParser
+
+DEFAULT_BACKEND="cpp"
+
+def parse_options():
+    parser = OptionParser()
+    parser.add_option("-o", "--outputfile", dest = "outputfile", metavar = "OUTPUTFILE",
+                      help = "File to write the generated AST code to.  If this is not provided, then the output is written to standard output.  Also this can be a folder where package names are implied by file paths.")
+    parser.add_option("-b", "--backend", dest = "backend", metavar = "BACKEND", default = DEFAULT_BACKEND,
+                      help = "The backend to generate code for, eg cpp, java, python etc")
+    parser.add_option("-t", "--templatepaths", dest = "template_paths", metavar = "TEMPLATE_PATHS", 
+                      help = "Locations where backend specific templates are to be found.")
+    parser.add_option("-i", "--inputfile", dest = "input_file", metavar = "INPUT_FILE", 
+                      help = "Input file containing AST definitions for which AST code is to be generated.")
+    if not options.input_file:
+        parser.error("Input file parameter is mandatory")
+    (options, args) = parser.parse_args()
+    return options, args
 
 if __name__ == "__main__":
-    the_module = imp.load_source("", sys.argv[1])
+    options, args = parse_options()
+
+    session = Session(options.sessionid, sessionsRoot = options.sessionsRoot, clearSession = options.clearSession)
+    session.processDumpFile(options.dumpfile)
+    the_module = imp.load_source("", options.input_file)
     for attrname in dir(the_module):
         try:
             attr = getattr(the_module, attrname)
