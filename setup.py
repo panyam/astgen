@@ -54,4 +54,7 @@ setup(name="astgen",
       scripts = scripts,
       packages = packages,
       data_files = data_files
+      install_requires = [
+          "jinja2"
+      ]
       )
