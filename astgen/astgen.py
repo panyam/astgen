@@ -1,4 +1,4 @@
-
+#!/b
 import os, sys, importlib, imp
 
 class ASTCodeGenerator(object):
@@ -58,15 +58,4 @@ class ASTNode(object):
 
     def generatePreamble(self):
         pass
-
-
-if __name__ == "__main__":
-    the_module = imp.load_source("", sys.argv[1])
-    for attrname in dir(the_module):
-        try:
-            attr = getattr(the_module, attrname)
-            if attrname != "ASTNode" and any(map(lambda x: x.__name__ == "ASTNode", attr.__mro__)):
-                print "Generating code for: ", attr, attrname, attr.getAllAttributes()
-        except (TypeError, AttributeError):
-            pass
 

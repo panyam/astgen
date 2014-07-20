@@ -1,71 +1,104 @@
 from distutils.core import setup
-from distutils.command.install_data import install_data
-from distutils.command.install import INSTALL_SCHEMES
-import os, sys
+import fnmatch, os.path
+from astgen import version
 
-VERSION = "0.0.1"
-install_requires = [
-    "jinja2"
-]
 
-CLASSIFIERS = [
-    'Intended Audience :: Language Developers',
-    'License :: OSI Approved :: BSD License',
-    'Operating System :: OS Independent',
-    'Topic :: Parser and Compiler Development',
-]
+def pdir():
+    dirname, _ = os.path.split(__file__)
+    return os.path.abspath(dirname)
+
+
+def _fnmatch(name, patternList):
+    for i in patternList:
+        if fnmatch.fnmatch(name, i):
+            return True
+    return False
+
+
+def _splitAll(path):
+    parts = []
+    h = path
+    while 1:
+        if not h:
+            break
+        h, t = os.path.split(h)
+        parts.append(t)
+    parts.reverse()
+    return parts
+
+
+def findPackages(path, dataExclude=[]):
+    """
+        Recursively find all packages and data directories rooted at path. Note
+        that only data _directories_ and their contents are returned -
+        non-Python files at module scope are not, and should be manually
+        included.
+
+        dataExclude is a list of fnmatch-compatible expressions for files and
+        directories that should not be included in pakcage_data.
+
+        Returns a (packages, package_data) tuple, ready to be passed to the
+        corresponding distutils.core.setup arguments.
+    """
+    packages = []
+    datadirs = []
+    for root, dirs, files in os.walk(path, topdown=True):
+        if "__init__.py" in files:
+            p = _splitAll(root)
+            packages.append(".".join(p))
+        else:
+            dirs[:] = []
+            if packages:
+                datadirs.append(root)
+
+    # Now we recurse into the data directories
+    package_data = {}
+    for i in datadirs:
+        if not _fnmatch(i, dataExclude):
+            parts = _splitAll(i)
+            module = ".".join(parts[:-1])
+            acc = package_data.get(module, [])
+            for root, dirs, files in os.walk(i, topdown=True):
+                sub = os.path.join(*_splitAll(root)[1:])
+                if not _fnmatch(sub, dataExclude):
+                    for fname in files:
+                        path = os.path.join(sub, fname)
+                        if not _fnmatch(path, dataExclude):
+                            acc.append(path)
+                else:
+                    dirs[:] = []
+            package_data[module] = acc
+    return packages, package_data
+
 
 # Tell distutils to put the data_files in platform-specific installation
 # locations. See here for an explanation:
 # http://groups.google.com/group/comp.lang.python/browse_thread/thread/35ec7b2fed36eaec/2105ee4d9e8042cb
-for scheme in INSTALL_SCHEMES.values():
-    scheme['data'] = scheme['purelib']
+# for scheme in INSTALL_SCHEMES.values(): scheme['data'] = scheme['purelib']
 
-def fullsplit(path, result=None):
-    """
-    Split a pathname into components (the opposite of os.path.join) in a
-    platform-neutral way.
-    """
-    if result is None:
-        result = []
-    head, tail = os.path.split(path)
-    if head == '':
-        return [tail] + result
-    if head == path:
-        return result
-    return fullsplit(head, [tail] + result)
-
-def get_all_sub_folders(parent):
-    packages, data_files, scripts = [], [], []
-    root_dir = os.path.dirname(__file__)
-    if root_dir != '':
-        os.chdir(root_dir)
-    for dirpath, dirnames, filenames in os.walk(parent):
-        # Ignore dirnames that start with '.'
-        for i, dirname in enumerate(dirnames):
-            if dirname.startswith('.'):
-                del dirnames[i]
-        if '__init__.py' in filenames:
-            packages.append('.'.join(fullsplit(dirpath)))
-        elif filenames:
-            data_files.append([dirpath, [os.path.join(dirpath, f) for f in filenames]])
-    return packages, data_files, scripts
-
-packages, data_files, scripts = get_all_sub_folders(".")
+long_description = file(os.path.join(pdir(), "README.txt")).read()
+packages, package_data = findPackages("libmproxy")
 
 print "Packages: ", packages
-print "Datafiles: ", data_files
-print "Scripts: ", scripts
+print "Datafiles: ", package_data
 
 setup(name="astgen",
-      version=VERSION,
-      classifiers = CLASSIFIERS,
+      version=version.VERSION,
       description="A generic code generators for AST for use in parsers.",
+      long_description=long_description,
       author="Sri Panyam",
       author_email="sri.panyam@gmail.com",
       url="http://github.com/panyam/astgen/",
-      scripts = scripts,
+      scripts = ["./scripts/astgen"],
       packages = packages,
-      data_files = data_files,
-      install_requires = install_requires
+      package_data = package_data,
+      install_requires = [
+        "jinja2>=2.7"
+      ],
+      classifiers = [
+        'Intended Audience :: Language Developers',
+        'License :: OSI Approved :: BSD License',
+        'Operating System :: OS Independent',
+        'Topic :: Parser and Compiler Development',
+      ]
       )
