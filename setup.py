@@ -3,6 +3,18 @@ from distutils.command.install_data import install_data
 from distutils.command.install import INSTALL_SCHEMES
 import os, sys
 
+VERSION = "0.0.1"
+install_requires = [
+    "jinja2"
+]
+
+CLASSIFIERS = [
+    'Intended Audience :: Language Developers',
+    'License :: OSI Approved :: BSD License',
+    'Operating System :: OS Independent',
+    'Topic :: Parser and Compiler Development',
+]
+
 # Tell distutils to put the data_files in platform-specific installation
 # locations. See here for an explanation:
 # http://groups.google.com/group/comp.lang.python/browse_thread/thread/35ec7b2fed36eaec/2105ee4d9e8042cb
@@ -46,15 +58,14 @@ print "Datafiles: ", data_files
 print "Scripts: ", scripts
 
 setup(name="astgen",
-      version="0.0.1",
+      version=VERSION,
+      classifiers = CLASSIFIERS,
       description="A generic code generators for AST for use in parsers.",
       author="Sri Panyam",
       author_email="sri.panyam@gmail.com",
       url="http://github.com/panyam/astgen/",
       scripts = scripts,
       packages = packages,
-      data_files = data_files
-      install_requires = [
-          "jinja2"
-      ]
+      data_files = data_files,
+      install_requires = install_requires
       )
