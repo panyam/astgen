@@ -25,3 +25,16 @@ def import_file(full_path_to_module):
         return module_obj
     except Exception, e:
         raise e
+
+def load_nodes_from_file(input_file):
+    import astgen
+    the_module = import_file(input_file)
+    nodes = []
+    for attrname, attr in the_module.__dict__.items():
+        try:
+            if issubclass(attr, astgen.ASTNode) and attr is not astgen.ASTNode:
+                nodes.append(attr)
+        except (TypeError, AttributeError):
+            pass
+    return nodes
+

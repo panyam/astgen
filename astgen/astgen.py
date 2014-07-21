@@ -30,6 +30,12 @@ class ASTNode(object):
     attributes = {}
 
     @classmethod
+    def getParentNode(cls):
+        if issubclass(cls.__base__, ASTNode) and cls.__base__ is not ASTNode:
+            return cls.__base__.__name__
+        return None
+
+    @classmethod
     def getNodeName(cls):
         cls.getAllAttributes()
         return cls.__attrib_table__["cls"]
@@ -45,7 +51,7 @@ class ASTNode(object):
                 cls.__attrib_table__["attributes"][key] = value
         return cls.__attrib_table__["attributes"]
 
-class ASTCodeGen(object):
+class ASTBackend(object):
     """
     Given an AST node generates the code for the node.  This can be used to 
     generate AST code for different languages or platforms.
@@ -67,33 +73,32 @@ class ASTCodeGen(object):
               1. eg as .h and .c/.cpp/.m respectively
     3. Use the templates based on above options to generate the code.
     """
-    def __init__(self, backend):
-        """
-        Creates a new code generator with the given backend.
-        """
-        self.backend = backend
-
-    def generateCode(self, astnodes):
-        self.backend.generationStarted(astnodes)
-        generated = {}
-        for node in astnodes:
-            self.generateCodeForNode(node, generated)
-        self.backend.generationFinished(astnodes)
-
-    def generateCodeForNode(self, node, generated):
-        if node in generated and generated[node]: return
-
-        generated[node] = True
-        if issubclass(node.__base__, ASTNode) and node.__base__ is not ASTNode:
-            self.generateCodeForNode(node.__base__, generated)
-
-        self.backend.nodeStarted(node)
-        self.backend.renderNode(node)
-        self.backend.nodeFinished(node)
-
-class ASTBackend(object):
     def __init__(self, *args, **kwargs):
         pass
+
+    def orderNodes(self, nodes):
+        """
+        Given a bunch of nodes, sorts them so that their code is generated in this final order
+        By default this orders nodes based on their parent dependancies.
+        """
+        visited = {}
+        out = []
+        def visit(node):
+            if node in visited and visited[node]: return 
+            visited[node] = True
+            if issubclass(node.__base__, ASTNode) and node.__base__ is not ASTNode:
+                visit(node.__base__)
+            out.append(node)
+
+        for node in nodes: visit(node)
+
+        return out
+
+    def generateCode(self, astnodes):
+        nodes = self.orderNodes(astnodes)
+        self.generationStarted(astnodes)
+        self.renderNodes(nodes)
+        self.generationFinished(astnodes)
 
     def generationStarted(self, astnodes):
         """
@@ -112,6 +117,12 @@ class ASTBackend(object):
         Called before the generation of code for a particular node.
         """
         pass
+
+    def renderNodes(self, nodes):
+        for node in nodes:
+            self.nodeStarted(node)
+            self.renderNode(node)
+            self.nodeFinished(node)
 
     def renderNode(self, node):
         print "Node Class: ", node.__class__, node.__class__.__name__, node.getNodeName(), node.getAllAttributes()

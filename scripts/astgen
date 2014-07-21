@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os, sys, imp
+import os, sys
 from astgen import astgen, utils
 from optparse import OptionParser
 
@@ -26,22 +26,17 @@ def parse_options():
 if __name__ == "__main__":
     options, args = parse_options()
 
-    the_module = imp.load_source("", options.input_file)
-    nodeclasses = []
-    for attrname, attr in the_module.__dict__.items():
-        try:
-            if issubclass(attr, astgen.ASTNode) and attr is not astgen.ASTNode:
-                nodeclasses.append(attr)
-        except (TypeError, AttributeError):
-            pass
+    nodes = utils.load_nodes_from_file(options.input_file)
 
     backend = options.backend.split(".")
-    backend = getattr(utils.import_module(".".join(backend[:-1])), backend[-1])
+    backendClass = getattr(utils.import_module(".".join(backend[:-1])), backend[-1])
 
     backend_config = utils.import_file(options.backend_config)
     bc_keys = filter(lambda x: not x.startswith("__"), dir(backend_config))
     backend_config = dict([(key, getattr(backend_config, key)) for key in bc_keys])
 
-    codegen = astgen.ASTCodeGen(backend(**backend_config));
-    codegen.generateCode(nodeclasses);
+    backend = backendClass(backendConfig = backend_config,
+                           outfile = options.outputfile,
+                           template = options.template)
+    backend.generateCode(nodes)
 

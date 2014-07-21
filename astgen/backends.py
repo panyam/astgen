@@ -1,5 +1,6 @@
 
 import os, astgen
+from jinja2 import Environment, PackageLoader
 
 class SingleFileBackend(astgen.ASTBackend):
     """
@@ -13,14 +14,23 @@ class SingleFileBackend(astgen.ASTBackend):
     """
     def __init__(self, *args, **kwargs):
         self.outfileName = kwargs["outfile"]
+        self.templateName = kwargs.get("template") or  "SingleFile/cpp"
         self.backendConfig = kwargs["backendConfig"]
+        if self.templateName.startswith("/"):
+            # use a loader that loads from absolute path
+            self.env = Environment()
+            self.template = self.env.get_template(self.templateName)
+        else:
+            self.env = Environment(loader=PackageLoader('astgen', 'templates'))
+            self.template = self.env.get_template(self.templateName)
+
 
     def generationStarted(self, astnodes):
         """
         Called before starting node generation for any of the nodes.
         """
         parent,child = os.path.split(self.outfileName)
-        if not os.isdir(parent): os.makedirs(parent)
+        if parent and not os.path.isdir(parent): os.makedirs(parent)
         self.outfile = open(self.outfileName, "w")
         # write the "preamble" before the nodes are generated
 
@@ -31,19 +41,6 @@ class SingleFileBackend(astgen.ASTBackend):
         # write the "conclusion" after the nodes are generated
         self.outfile.close()
 
-    def nodeStarted(self, node):
-        """
-        Called before the generation of code for a particular node.
-        """
-        pass
-
-    def renderNode(self, node):
-        print "Node Class: ", node.__class__, node.__class__.__name__, node.getNodeName(), node.getAllAttributes()
-        pass
-
-    def nodeFinished(self, node):
-        """
-        Called after the generation of code for a particular node.
-        """
-        pass
+    def renderNodes(self, nodes):
+        print self.template.render(nodes = nodes, backendConfig = self.backendConfig)
 
