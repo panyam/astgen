@@ -4,23 +4,30 @@ import os, sys
 from astgen import astgen, utils
 from optparse import OptionParser
 
-DEFAULT_BACKEND="cpp"
-
 def parse_options():
     parser = OptionParser()
-    parser.add_option("-o", "--outputfile", dest = "outputfile", metavar = "OUTPUTFILE",
-                      help = "File to write the generated AST code to.  If this is not provided, then the output is written to standard output.  Also this can be a folder where package names are implied by file paths.")
-    parser.add_option("-b", "--backend", dest = "backend", metavar = "BACKEND", default = DEFAULT_BACKEND,
+    parser.add_option("-o", "--outputdir", dest = "outputdir", metavar = "OUTPUTDIR", default = "",
+                      help = "The output folder in which all generted files are written to.")
+    parser.add_option("-b", "--backend", dest = "backend", metavar = "BACKEND", 
                       help = "The backend to generate code for, eg cpp, java, python etc")
     parser.add_option("-c", "--backend_config", dest = "backend_config", metavar = "BACKEND_CONFIG", 
                       help = "Backend specific configs to be provided for the code generator.")
-    parser.add_option("-t", "--template", dest = "template", metavar = "TEMPLATE", 
-                      help = "Root template file to be used to generate code.")
     parser.add_option("-i", "--inputfile", dest = "input_file", metavar = "INPUT_FILE", 
                       help = "Input file containing AST definitions for which AST code is to be generated.")
     (options, args) = parser.parse_args()
+    options.outputdir = options.outputdir.strip()
+    if options.outputdir and otions.output.dir not in [".", "..", "./", "../"]:
+        if not os.path.isdir(options.outputdir):
+            os.path.makedirs(options.outputdir)
     if not options.input_file:
         parser.error("Input file parameter is mandatory")
+    if not options.backend:
+        parser.error("""
+        Backend parameter is mandatory.  Built in options are (you can provide your own):
+
+        astgen.backends.SingieFileBackend
+        astgen.backends.TwoFilesBackend
+        """)
     return options, args
 
 if __name__ == "__main__":
@@ -35,8 +42,6 @@ if __name__ == "__main__":
     bc_keys = filter(lambda x: not x.startswith("__"), dir(backend_config))
     backend_config = dict([(key, getattr(backend_config, key)) for key in bc_keys])
 
-    backend = backendClass(backendConfig = backend_config,
-                           outfile = options.outputfile,
-                           template = options.template)
+    backend = backendClass(backendConfig = backend_config, outdir = options.outputdir)
     backend.generateCode(nodes)
 

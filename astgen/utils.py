@@ -38,3 +38,12 @@ def load_nodes_from_file(input_file):
             pass
     return nodes
 
+def load_template(template_path):
+    from jinja2 import Environment, PackageLoader
+    if template_path.startswith("/"):
+        # use a loader that loads from absolute path
+        env = Environment()
+    else:
+        env = Environment(loader=PackageLoader('astgen', 'templates'))
+    return env.get_template(template_path)
+

@@ -8,7 +8,6 @@ extern "C" {
 
 {{backendConfig.PREAMBLE}}
 
-
 {% for node in nodes %}
 class {{node.getNodeName()}};
 typedef {{node.getNodeName()}} *{{node.getNodeName()}}Ptr; {% endfor %}
@@ -22,10 +21,10 @@ namespace {{backendConfig.NAMESPACE}} {
 class {{node.getNodeName()}} {% if node.getParentNode() %}: public {{ node.getParentNode() }}{% endif %}
 {
 public:
-    virtual ~{{node.getNodeName()}}() { }
+    virtual ~{{node.getNodeName()}}();
     {% for attrib, value in node.attributes.iteritems() %}
-    const {{backendConfig.getType(value)}} &get{{attrib[0]|upper}}{{attrib[1:]}}() { return this->{{attrib}}; }
-    void set{{attrib[0]|upper}}{{attrib[1:]}}(const {{backendConfig.getType(value)}} &value) { this->{{attrib}} = value; }
+    const {{backendConfig.getType(value)}} &get{{attrib[0]|upper}}{{attrib[1:]}}();
+    void set{{attrib[0]|upper}}{{attrib[1:]}}(const {{backendConfig.getType(value)}} &value);
     {% endfor %}
 protected:
     {% for attrib, value in node.attributes.iteritems() %}
