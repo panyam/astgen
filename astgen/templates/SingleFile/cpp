@@ -8,14 +8,14 @@ extern "C" {
 
 {{backendConfig.PREAMBLE}}
 
-
-{% for node in nodes %}
-class {{node.getNodeName()}};
-typedef {{node.getNodeName()}} *{{node.getNodeName()}}Ptr; {% endfor %}
-
 {% if backendConfig.NAMESPACE %}
 namespace {{backendConfig.NAMESPACE}} {
 {% endif %}
+
+// Foward defs
+{% for node in nodes %}
+class {{node.getNodeName()}};
+typedef {{node.getNodeName()}} *{{node.getNodeName()}}Ptr; {% endfor %}
 
 {% for node in nodes %}
 
