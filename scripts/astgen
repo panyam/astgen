@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import os, sys, imp
-from astgen import astgen
+from astgen import astgen, utils
 from optparse import OptionParser
 
 DEFAULT_BACKEND="cpp"
@@ -12,8 +12,10 @@ def parse_options():
                       help = "File to write the generated AST code to.  If this is not provided, then the output is written to standard output.  Also this can be a folder where package names are implied by file paths.")
     parser.add_option("-b", "--backend", dest = "backend", metavar = "BACKEND", default = DEFAULT_BACKEND,
                       help = "The backend to generate code for, eg cpp, java, python etc")
-    parser.add_option("-t", "--templatepaths", dest = "template_paths", metavar = "TEMPLATE_PATHS", 
-                      help = "Locations where backend specific templates are to be found.")
+    parser.add_option("-c", "--backend_config", dest = "backend_config", metavar = "BACKEND_CONFIG", 
+                      help = "Backend specific configs to be provided for the code generator.")
+    parser.add_option("-t", "--template", dest = "template", metavar = "TEMPLATE", 
+                      help = "Root template file to be used to generate code.")
     parser.add_option("-i", "--inputfile", dest = "input_file", metavar = "INPUT_FILE", 
                       help = "Input file containing AST definitions for which AST code is to be generated.")
     (options, args) = parser.parse_args()
@@ -26,14 +28,20 @@ if __name__ == "__main__":
 
     the_module = imp.load_source("", options.input_file)
     nodeclasses = []
-    for attrname in dir(the_module):
+    for attrname, attr in the_module.__dict__.items():
         try:
-            attr = getattr(the_module, attrname)
-            if attrname != "ASTNode" and any(map(lambda x: x.__name__ == "ASTNode", attr.__mro__)):
-                print "Generating code for: ", attr, attrname, attr.getAllAttributes()
+            if issubclass(attr, astgen.ASTNode) and attr is not astgen.ASTNode:
                 nodeclasses.append(attr)
         except (TypeError, AttributeError):
             pass
 
-    codegen = astgen.ASTCodeGen();
+    backend = options.backend.split(".")
+    backend = getattr(utils.import_module(".".join(backend[:-1])), backend[-1])
+
+    backend_config = utils.import_file(options.backend_config)
+    bc_keys = filter(lambda x: not x.startswith("__"), dir(backend_config))
+    backend_config = dict([(key, getattr(backend_config, key)) for key in bc_keys])
+
+    codegen = astgen.ASTCodeGen(backend(**backend_config));
     codegen.generateCode(nodeclasses);
+

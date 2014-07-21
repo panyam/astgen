@@ -30,9 +30,14 @@ class ASTNode(object):
     attributes = {}
 
     @classmethod
+    def getNodeName(cls):
+        cls.getAllAttributes()
+        return cls.__attrib_table__["cls"]
+
+    @classmethod
     def getAllAttributes(cls):
-        if not hasattr(cls, "__attrib_table__") or cls.__attrib_table__["cls"] is not cls:
-            cls.__attrib_table__ = {"cls": cls, "attributes": {}}
+        if not hasattr(cls, "__attrib_table__") or cls.__attrib_table__["cls"] is not cls.__name__:
+            cls.__attrib_table__ = {"cls": cls.__name__, "attributes": {}}
             if cls.__base__ and hasattr(cls.__base__, "getAllAttributes"):
                 for key,value in cls.__base__.getAllAttributes().items():
                     cls.__attrib_table__["attributes"][key] = value
@@ -61,31 +66,60 @@ class ASTCodeGen(object):
           d. each node having its own interface and implementation file, eg:
               1. eg as .h and .c/.cpp/.m respectively
     3. Use the templates based on above options to generate the code.
-
-    def generate(node, astnodes):
-        generated = {}
-        for node in astnodes:
-            generateCodeForNode(node, generated)
-
-    def generateCodeForNode(node, generated = {}):
-        if node in generated and generated[node]: return
-
-        if node.parent: generateCodeForNode(node.parent, generated)
-        sendEvent("nodeStarted", node)
-        sendEvent("nodeFinished", node)
-        generated[node] = True
     """
+    def __init__(self, backend):
+        """
+        Creates a new code generator with the given backend.
+        """
+        self.backend = backend
+
     def generateCode(self, astnodes):
+        self.backend.generationStarted(astnodes)
         generated = {}
         for node in astnodes:
             self.generateCodeForNode(node, generated)
+        self.backend.generationFinished(astnodes)
 
     def generateCodeForNode(self, node, generated):
         if node in generated and generated[node]: return
 
         generated[node] = True
-        if issubclass(node.__base__, ASTNode):
+        if issubclass(node.__base__, ASTNode) and node.__base__ is not ASTNode:
             self.generateCodeForNode(node.__base__, generated)
 
-        print "Node Class: ", node.__class__
+        self.backend.nodeStarted(node)
+        self.backend.renderNode(node)
+        self.backend.nodeFinished(node)
+
+class ASTBackend(object):
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def generationStarted(self, astnodes):
+        """
+        Called before starting node generation for any of the nodes.
+        """
+        pass
+
+    def generationFinished(self, astnodes):
+        """
+        Called after the code generation of all nodes has completed.
+        """
+        pass
+
+    def nodeStarted(self, node):
+        """
+        Called before the generation of code for a particular node.
+        """
+        pass
+
+    def renderNode(self, node):
+        print "Node Class: ", node.__class__, node.__class__.__name__, node.getNodeName(), node.getAllAttributes()
+        pass
+
+    def nodeFinished(self, node):
+        """
+        Called after the generation of code for a particular node.
+        """
+        pass
 
