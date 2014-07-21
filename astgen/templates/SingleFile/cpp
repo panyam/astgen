@@ -18,10 +18,14 @@ class {{node.getNodeName()}} {% if node.getParentNode() %}: public {{ node.getPa
 {
 public:
     virtual ~{{node.getNodeName()}}();
+    {% for attrib, value in node.attributes.iteritems() %}
+    {{backendConfig.getType(value)}} get{{attrib[0]|upper}}{{attrib[1:]}}();
+    void set{{attrib[0]|upper}}{{attrib[1:]}}(const {{backendConfig.getType(value)}} &value);
+    {% endfor %}
 
 protected:
     {% for attrib, value in node.attributes.iteritems() %}
-    {{value}} {{attrib}};
+    {{backendConfig.getType(value)}} {{attrib}};
     {% endfor %}
 };
 
