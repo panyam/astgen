@@ -2,6 +2,8 @@
 #ifndef __{{backendConfig.NAMESPACE}}__GENERATED_AST_NODES_H__
 #define __{{backendConfig.NAMESPACE}}__GENERATED_AST_NODES_H__
 
+{{backendConfig.INITIAL_HEADERS}}
+
 #if defined(_cplusplus) || defined(__cplusplus)
 extern "C" {
 #endif
