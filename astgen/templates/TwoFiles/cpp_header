@@ -29,13 +29,12 @@ public:
     const {{backendConfig.getType(value)}} &get{{attrib[0]|upper}}{{attrib[1:]}}();
     void set{{attrib[0]|upper}}{{attrib[1:]}}(const {{backendConfig.getType(value)}} &value);
     {% endfor %}
+{% if node.attributes %}
 protected:
     {% for attrib, value in node.attributes.iteritems() %}
-    {{backendConfig.getType(value)}} {{attrib}};
-    {% endfor %}
-};
-
-{% endfor %}
+    {{backendConfig.getType(value)}} {{attrib}};{% endfor %}
+{% endif %}
+};{% endfor %}
 
 {% if backendConfig.NAMESPACE %}
 }

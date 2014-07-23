@@ -1,5 +1,7 @@
 
-1. Write all types of backends for C++, Java and Python
-2. Documentation
-3. Unit tests
-4. Upload to pip
+* Implement constructors and methods (virtual or otherwise) in models
+* Implement ability to add language specific verbatim tags in model as well as backend config.
+* Write all types of backends for C++, Java and Python
+* Documentation
+* Unit tests
+* Upload to pip

@@ -1,26 +1,5 @@
 
-class BasicType(object):
-    def __init__(self, name): self.typename = name
-    def __str__(self): return self.typename
-    def __repr__(self): return str(self)
-
-class RefTo(object):
-    def __init__(self, name): self.typename = name
-    def __str__(self): return "(* %s)" % self.typename
-    def __repr__(self): return str(self)
-
-class ListOf(object):
-    def __init__(self, base_type = None): self.base_type = base_type
-    def __str__(self): return "[%s]" % str(self.base_type)
-    def __repr__(self): return str(self)
-
-class MapOf(object):
-    def __init__(self, key_type = None, value_type = None):
-        self.key_type = key_type
-        self.base_type = base_type
-
-    def __str__(self): return "<%s,%s>" % (str(self.key_type), str(self.value_type))
-    def __repr__(self): return str(self)
+from types import *
 
 class ASTNode(object):
     """
@@ -96,6 +75,8 @@ class ASTBackend(object):
 
     def generateCode(self, astnodes):
         nodes = self.orderNodes(astnodes)
+        print "Transitive Closure of nodes:"
+        for node in nodes: print node
         self.generationStarted(astnodes)
         self.renderNodes(nodes)
         self.generationFinished(astnodes)
