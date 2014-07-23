@@ -31,12 +31,11 @@ public:
     {
         this->{{attrib}} = value;
     }
-    {% endfor %}
+{% endfor %}
 {% if node.attributes %}
 protected:
     {% for attrib, value in node.attributes.iteritems() %}
-    {{backendConfig.getType(value)}} {{attrib}};
-    {% endfor %}
+    {{backendConfig.getType(value)}} {{attrib}};{% endfor %}
 {% endif %}
 };{% endfor %}
 

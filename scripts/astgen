@@ -8,19 +8,19 @@ def parse_options():
     parser = OptionParser()
     parser.add_option("-o", "--outputdir", dest = "outputdir", metavar = "OUTPUTDIR", default = "",
                       help = "The output folder in which all generted files are written to.")
-    parser.add_option("-b", "--backend", dest = "backend", metavar = "BACKEND", 
+    parser.add_option("-c", "--backend_class", dest = "backend", metavar = "BACKEND", 
                       help = "The backend to generate code for, eg cpp, java, python etc")
-    parser.add_option("-c", "--backend_config", dest = "backend_config", metavar = "BACKEND_CONFIG", 
+    parser.add_option("-b", "--backend_config", dest = "backend_config", metavar = "BACKEND_CONFIG", 
                       help = "Backend specific configs to be provided for the code generator.")
-    parser.add_option("-i", "--inputfile", dest = "input_file", metavar = "INPUT_FILE", 
-                      help = "Input file containing AST definitions for which AST code is to be generated.")
+    parser.add_option("-m", "--modelfile", dest = "model_file", metavar = "MODEL_FILE", 
+                      help = "Input model file containing AST definitions for which AST code is to be generated.")
     (options, args) = parser.parse_args()
     options.outputdir = options.outputdir.strip()
     if options.outputdir and otions.output.dir not in [".", "..", "./", "../"]:
         if not os.path.isdir(options.outputdir):
             os.path.makedirs(options.outputdir)
-    if not options.input_file:
-        parser.error("Input file parameter is mandatory")
+    if not options.model_file:
+        parser.error("Model file parameter is mandatory")
     if not options.backend:
         parser.error("""
         Backend parameter is mandatory.  Built in options are (you can provide your own):
@@ -33,7 +33,7 @@ def parse_options():
 if __name__ == "__main__":
     options, args = parse_options()
 
-    nodes = utils.load_nodes_from_file(options.input_file)
+    nodes = utils.load_nodes_from_file(options.model_file)
 
     backend = options.backend.split(".")
     backendClass = getattr(utils.import_module(".".join(backend[:-1])), backend[-1])
