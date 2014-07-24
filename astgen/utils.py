@@ -10,7 +10,6 @@ def import_module(name):
 
 
 def import_file(full_path_to_module):
-    try:
         module_dir, module_file = os.path.split(full_path_to_module)
         module_name, module_ext = os.path.splitext(module_file)
         save_cwd = os.getcwd()
@@ -23,8 +22,6 @@ def import_file(full_path_to_module):
         globals()[module_name] = module_obj
         os.chdir(save_cwd)
         return module_obj
-    except Exception, e:
-        raise e
 
 def load_nodes_from_file(input_file):
     import astgen

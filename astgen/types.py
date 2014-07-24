@@ -14,10 +14,18 @@ class ListOf(object):
     def __str__(self): return "[%s]" % str(self.base_type)
     def __repr__(self): return str(self)
 
+class PairOf(object):
+    def __init__(self, type1 = None, type2 = None):
+        self.type1 = type1 
+        self.type2 = type2
+
+    def __str__(self): return "<%s,%s>" % (str(self.type1), str(self.type2))
+    def __repr__(self): return str(self)
+
 class MapOf(object):
     def __init__(self, key_type = None, value_type = None):
         self.key_type = key_type
-        self.base_type = base_type
+        self.value_type = value_type
 
     def __str__(self): return "<%s,%s>" % (str(self.key_type), str(self.value_type))
     def __repr__(self): return str(self)
@@ -34,5 +42,5 @@ class UnionType(object):
         self.members = members 
 
     def __repr__(self): return str(self)
-    def __str__(self): return "{%s}" % (",".join(["%s = %s" % (k,v) for (k,v) in self.members.iteritems()))
+    def __str__(self): return "{%s}" % (",".join(["%s = %s" % (k,v) for (k,v) in self.members.iteritems()]))
 
