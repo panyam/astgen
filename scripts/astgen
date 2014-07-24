@@ -4,13 +4,16 @@ import os, sys
 from astgen import astgen, utils
 from optparse import OptionParser
 
+DEFAULT_LAYOUT = "astgen.layouts.SingleFileLayout"
+DEFAULT_PLATFORM = "astgen.platforms.CPlusPlus"
+
 def parse_options():
     parser = OptionParser()
     parser.add_option("-o", "--outputdir", dest = "outputdir", metavar = "OUTPUTDIR", default = "",
                       help = "The output folder in which all generted files are written to.")
-    parser.add_option("-l", "--layout_backend", dest = "layout_backend", metavar = "STRUCTURE_BACKEND", 
+    parser.add_option("-l", "--layout_backend", dest = "layout_backend", metavar = "LAYOUT_BACKEND", default = DEFAULT_LAYOUT,
                       help = "The backend to decide the package layout of the code being generated, eg single file, multiple files etc")
-    parser.add_option("-p", "--platform_backend", dest = "platform_backend", metavar = "PLATFORM_BACKEND", 
+    parser.add_option("-p", "--platform_backend", dest = "platform_backend", metavar = "PLATFORM_BACKEND", default = DEFAULT_PLATFORM,
                       help = "The backend to help with the platform to target code genration for, eg java, python, stl, C etc")
     parser.add_option("-c", "--data", dest = "backend_config", metavar = "BACKEND_CONFIG", 
                       help = "Data required any custom data that can be used/passed to the platform or layout backends.")
@@ -22,7 +25,9 @@ def parse_options():
         if not os.path.isdir(options.outputdir):
             os.path.makedirs(options.outputdir)
     if not options.model_file:
-        parser.error("Model file parameter is mandatory")
+        parser.error("Model file parameter is mandatory.")
+    if not options.backend_config:
+        parser.error("Backend config paramater is mandatory.")
     if not options.layout_backend:
         parser.error("""
         Backend parameter is mandatory.  Built in options are (you can provide your own):
@@ -38,6 +43,8 @@ def parse_options():
         astgen.platforms.Java
         astgen.platforms.Python
         """)
+    print "Layout Backend: ", options.layout_backend
+    print "Platform Backend: ", options.platform_backend
     return options, args
 
 if __name__ == "__main__":
