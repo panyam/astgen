@@ -6,7 +6,7 @@ DEFAULT_SINGLEFILE_TEMPLATE = "SingleFile/cpp"
 DEFAULT_TWOFILES_HEADER_TEMPLATE = "TwoFiles/cpp_header"
 DEFAULT_TWOFILES_IMPLEMENTATION_TEMPLATE = "TwoFiles/cpp_implementation"
 
-class SingleFileBackend(astgen.ASTBackend):
+class SingleFileLayout(astgen.ASTLayout):
     """
     This backend is used for langauges/frameworks where all the code related to *all* nodes
     are outputted into a single file.
@@ -17,7 +17,7 @@ class SingleFileBackend(astgen.ASTBackend):
     2. A single java class with inner classes for each specific node type.
     """
     def __init__(self, *args, **kwargs):
-        self.backendConfig = kwargs["backendConfig"]
+        super(SingleFileLayout, self).__init__(self, *args, **kwargs)
         self.outputdir = kwargs.get("outdir") or "."
         self.outfileName = self.backendConfig.get("HEADER_OUTPUT") or None
         assert self.outfileName is not None, "HEADER_OUTPUT variable MUST be specified in the backend config.  This is the file to the generated code for all nodes will be written to."
@@ -40,12 +40,12 @@ class SingleFileBackend(astgen.ASTBackend):
     def renderNodes(self, nodes):
         self.outfile.write(self.template.render(nodes = nodes, backendConfig = self.backendConfig))
 
-class TwoFilesBackend(astgen.ASTBackend):
+class TwoFilesLayout(astgen.ASTLayout):
     """
     This backend is used where there is a concept of a header/implementation seperation (eg C/C++/ObjC).
     """
     def __init__(self, *args, **kwargs):
-        self.backendConfig = kwargs["backendConfig"]
+        super(TwoFilesLayout, self).__init__(self, *args, **kwargs)
         self.outputdir = kwargs.get("outdir") or "."
         self.header_filename = self.backendConfig.get("HEADER_OUTPUT") or None
         self.implementation_filename = self.backendConfig.get("IMPLEMENTATION_OUTPUT") or None

@@ -24,13 +24,17 @@ class ASTNode(object):
         if not hasattr(cls, "__attrib_table__") or cls.__attrib_table__["cls"] is not cls.__name__:
             cls.__attrib_table__ = {"cls": cls.__name__, "attributes": {}}
             if cls.__base__ and hasattr(cls.__base__, "getAllAttributes"):
-                for key,value in cls.__base__.getAllAttributes().items():
+                for key,value in cls.__base__.getAllAttributes().iteritems():
                     cls.__attrib_table__["attributes"][key] = value
-            for key,value in cls.attributes.items():
+            for key,value in cls.attributes.iteritems():
                 cls.__attrib_table__["attributes"][key] = value
         return cls.__attrib_table__["attributes"]
 
-class ASTBackend(object):
+class ASTPlatform(object):
+    def __init__(self, *args, **kwargs):
+        self.backendConfig = kwargs.get("backendConfig") or {}
+
+class ASTLayout(object):
     """
     Given an AST node generates the code for the node.  This can be used to 
     generate AST code for different languages or platforms.
@@ -53,7 +57,7 @@ class ASTBackend(object):
     3. Use the templates based on above options to generate the code.
     """
     def __init__(self, *args, **kwargs):
-        pass
+        self.backendConfig = kwargs.get("backendConfig") or {}
 
     def orderNodes(self, nodes):
         """

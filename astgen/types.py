@@ -31,11 +31,12 @@ class MapOf(object):
     def __repr__(self): return str(self)
 
 class EnumType(object):
-    def __init__(self, *enumvals):
-        self.enumvals = enumvals
+    def __init__(self, enum_name, *enum_vals):
+        self.enum_name = enum_name
+        self.enum_vals = enum_vals
 
     def __repr__(self): return str(self)
-    def __str__(self): return "[%s]" % (",".join(self.enumvals))
+    def __str__(self): return "[%s: %s]" % (self.enum_name, ",".join(self.enum_vals))
 
 class UnionType(object):
     def __init__(self, **members):

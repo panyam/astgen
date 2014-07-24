@@ -39,8 +39,8 @@ def load_template(template_path):
     from jinja2 import Environment, PackageLoader
     if template_path.startswith("/"):
         # use a loader that loads from absolute path
-        env = Environment()
+        env = Environment(trim_blocks = True, lstrip_blocks = True)
     else:
-        env = Environment(loader=PackageLoader('astgen', 'templates'))
+        env = Environment(trim_blocks = True, lstrip_blocks = True, loader=PackageLoader('astgen', 'templates'))
     return env.get_template(template_path)
 
