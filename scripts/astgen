@@ -62,7 +62,7 @@ if __name__ == "__main__":
 
     layout_backend = options.layout_backend.split(".")
     layoutBackendClass = getattr(utils.import_module(".".join(layout_backend[:-1])), layout_backend[-1])
-    layoutBackend = layoutBackendClass(platformBackend = platformBackend,
+    layoutBackend = layoutBackendClass(platformBackend,
                                        backendConfig = backend_config,
                                        outdir = options.outputdir)
     layoutBackend.generateCode(nodes)

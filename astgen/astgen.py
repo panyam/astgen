@@ -56,7 +56,8 @@ class ASTLayout(object):
               1. eg as .h and .c/.cpp/.m respectively
     3. Use the templates based on above options to generate the code.
     """
-    def __init__(self, *args, **kwargs):
+    def __init__(self, platformConfig, *args, **kwargs):
+        self.platformConfig = platformConfig
         self.backendConfig = kwargs.get("backendConfig") or {}
 
     def orderNodes(self, nodes):

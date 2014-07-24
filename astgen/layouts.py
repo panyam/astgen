@@ -38,7 +38,9 @@ class SingleFileLayout(astgen.ASTLayout):
         self.outfile.close()
 
     def renderNodes(self, nodes):
-        self.outfile.write(self.template.render(nodes = nodes, backendConfig = self.backendConfig))
+        self.outfile.write(self.template.render(nodes = nodes,
+                                                backendConfig = self.backendConfig,
+                                                platform = self.platformBackend))
 
 class TwoFilesLayout(astgen.ASTLayout):
     """
@@ -76,5 +78,7 @@ class TwoFilesLayout(astgen.ASTLayout):
 
     def renderNodes(self, nodes):
         self.header_file.write(self.header_template.render(nodes = nodes, backendConfig = self.backendConfig))
-        self.implementation_file.write(self.implementation_template.render(nodes = nodes, backendConfig = self.backendConfig))
+        self.implementation_file.write(self.implementation_template.render(nodes = nodes,
+                                                                           backendConfig = self.backendConfig),
+                                                                           platform = self.platformConfig)
 
