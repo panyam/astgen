@@ -6,7 +6,7 @@ class ASTNode(object):
     A class that represents an AST node that is generated to be useable by 
     a parser for building the AST
     """
-    attributes = {}
+    properties = {}
 
     @classmethod
     def getParentNode(cls):
@@ -16,21 +16,40 @@ class ASTNode(object):
 
     @classmethod
     def getNodeName(cls):
-        cls.getAllAttributes()
-        return cls.__attrib_table__["cls"]
+        cls.getAllProperties()
+        return cls.__property_table__["cls"]
 
     @classmethod
-    def getAllAttributes(cls):
-        if not hasattr(cls, "__attrib_table__") or cls.__attrib_table__["cls"] is not cls.__name__:
-            cls.__attrib_table__ = {"cls": cls.__name__, "attributes": {}}
-            if cls.__base__ and hasattr(cls.__base__, "getAllAttributes"):
-                for key,value in cls.__base__.getAllAttributes().iteritems():
-                    cls.__attrib_table__["attributes"][key] = value
-            for key,value in cls.attributes.iteritems():
-                cls.__attrib_table__["attributes"][key] = value
-        return cls.__attrib_table__["attributes"]
+    def getAllProperties(cls):
+        if not hasattr(cls, "__property_table__") or cls.__property_table__["cls"] is not cls.__name__:
+            cls.__property_table__ = {"cls": cls.__name__, "properties": {}}
+            if cls.__base__ and hasattr(cls.__base__, "getAllProperties"):
+                for key,value in cls.__base__.getAllProperties().iteritems():
+                    cls.__property_table__["properties"][key] = value
+            for key,value in cls.properties.iteritems():
+                cls.__property_table__["properties"][key] = value
+        return cls.__property_table__["properties"]
+
+    @classmethod
+    def getConstructors(cls):
+        return []
+
+    @classmethod
+    def getGettersFor(cls, prop):
+        # for a particular property the default getter would be:
+        # of type const reference of the getter's value
+        return []
+
+    @classmethod
+    def getSettersFor(cls, prop):
+        return []
 
 class ASTPlatform(object):
+    """
+    The platform backend takes care of all language and platform specific details 
+    like determining exact classes for the types, method signatures for one or more
+    getters and/or setters for properties.
+    """
     def __init__(self, *args, **kwargs):
         self.backendConfig = kwargs.get("backendConfig") or {}
 
@@ -56,8 +75,9 @@ class ASTLayout(object):
               1. eg as .h and .c/.cpp/.m respectively
     3. Use the templates based on above options to generate the code.
     """
-    def __init__(self, platformConfig, *args, **kwargs):
-        self.platformConfig = platformConfig
+    def __init__(self, platformBackend, *args, **kwargs):
+        self.platformBackend = platformBackend
+        print "Platform Backend 2: ", self.platformBackend
         self.backendConfig = kwargs.get("backendConfig") or {}
 
     def orderNodes(self, nodes):
@@ -111,7 +131,7 @@ class ASTLayout(object):
             self.nodeFinished(node)
 
     def renderNode(self, node):
-        print "Node Class: ", node.__class__, node.__class__.__name__, node.getNodeName(), node.getAllAttributes()
+        print "Node Class: ", node.__class__, node.__class__.__name__, node.getNodeName(), node.getAllProperties()
         pass
 
     def nodeFinished(self, node):

@@ -1,0 +1,20 @@
+
+{% import "cpp_common" as cpp_common with context %}
+
+{{backendConfig.IMPLEMENTATION_PREAMBLE}}
+
+{% if backendConfig.NAMESPACE %}
+namespace {{backendConfig.NAMESPACE}} {
+{% endif %}
+
+{% for node in nodes %}
+{{ render_destructor(node, true) }}
+{% for prop, value in node.properties.iteritems() %}
+    {{ cpp_common.render_property_getter(prop_name, prop_type, True) }}
+    {{ cpp_common.render_property_setter(prop_name, prop_type, True) }}
+{% endfor %}
+
+{% if backendConfig.NAMESPACE %}
+}
+{% endif %}
+

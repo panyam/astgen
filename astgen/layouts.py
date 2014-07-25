@@ -1,10 +1,9 @@
 
 import os, astgen, utils
 
-DEFAULT_SINGLEFILE_TEMPLATE = "SingleFile/cpp"
-
-DEFAULT_TWOFILES_HEADER_TEMPLATE = "TwoFiles/cpp_header"
-DEFAULT_TWOFILES_IMPLEMENTATION_TEMPLATE = "TwoFiles/cpp_implementation"
+DEFAULT_SINGLEFILE_TEMPLATE = "cpp_header"
+DEFAULT_TWOFILES_HEADER_TEMPLATE = DEFAULT_SINGLEFILE_TEMPLATE
+DEFAULT_TWOFILES_IMPLEMENTATION_TEMPLATE = "cpp_implementation"
 
 class SingleFileLayout(astgen.ASTLayout):
     """
@@ -17,7 +16,7 @@ class SingleFileLayout(astgen.ASTLayout):
     2. A single java class with inner classes for each specific node type.
     """
     def __init__(self, *args, **kwargs):
-        super(SingleFileLayout, self).__init__(self, *args, **kwargs)
+        super(SingleFileLayout, self).__init__(*args, **kwargs)
         self.outputdir = kwargs.get("outdir") or "."
         self.outfileName = self.backendConfig.get("HEADER_OUTPUT") or None
         assert self.outfileName is not None, "HEADER_OUTPUT variable MUST be specified in the backend config.  This is the file to the generated code for all nodes will be written to."
@@ -47,7 +46,7 @@ class TwoFilesLayout(astgen.ASTLayout):
     This backend is used where there is a concept of a header/implementation seperation (eg C/C++/ObjC).
     """
     def __init__(self, *args, **kwargs):
-        super(TwoFilesLayout, self).__init__(self, *args, **kwargs)
+        super(TwoFilesLayout, self).__init__(*args, **kwargs)
         self.outputdir = kwargs.get("outdir") or "."
         self.header_filename = self.backendConfig.get("HEADER_OUTPUT") or None
         self.implementation_filename = self.backendConfig.get("IMPLEMENTATION_OUTPUT") or None
@@ -77,8 +76,11 @@ class TwoFilesLayout(astgen.ASTLayout):
         self.implementation_file.close()
 
     def renderNodes(self, nodes):
-        self.header_file.write(self.header_template.render(nodes = nodes, backendConfig = self.backendConfig))
+        self.header_file.write(self.header_template.render(nodes = nodes, 
+                                                           platform = self.platformBackend,
+                                                           no_implementation = True,
+                                                           backendConfig = self.backendConfig))
         self.implementation_file.write(self.implementation_template.render(nodes = nodes,
                                                                            backendConfig = self.backendConfig),
-                                                                           platform = self.platformConfig)
+                                                                           platform = self.platformBackend)
 

@@ -1,0 +1,70 @@
+
+
+{% macro render_destructor(node, withscope = False) -%}
+{% if no_implementation %}
+    virtual ~{{node.getNodeName()}}();
+{% else -%}
+    {% if withscope %}{{node.getNodeName}}::{%else%}virtual {% endif %}~{{node.getNodeName()}}() { }
+{%- endif %}
+{%- endmacro %}
+
+{% macro render_property_getter(prop_name, prop_type, withscope = False) -%}
+{% if prop_type.__class__.__name__ == "UnionType" -%}
+    {% for uname, utype in prop_type.members.iteritems() %}
+    {% if no_implementation -%}
+        const {{platform.getType(utype)}} &get{{camel_case(prop_name)}}_{{camel_case(uname)}}();
+    {% else -%}
+        const {{platform.getType(utype)}} &{% if withscope %}{{node.getNodeName}}::{%endif%}get{{camel_case(prop_name)}}_{{camel_case(uname)}}()
+        {
+            return this->{{prop_name}}.{{uname}};
+        }
+    {%- endif %}
+    {% endfor %}
+{% else %}
+    {% if no_implementation -%}
+        const {{platform.getType(prop_type)}} &get{{camel_case(prop_name)}}();
+    {% else -%}
+        const {{platform.getType(prop_type)}} &{% if withscope %}{{node.getNodeName}}::{%endif%}get{{camel_case(prop_name)}}()
+        {
+            return this->{{prop_name}};
+        }
+    {%- endif %}
+{%- endif %}
+{%- endmacro %}
+
+{% macro render_property_setter(prop_name, prop_type, withscope = False) -%}
+{% if prop_type.__class__.__name__ == "UnionType" -%}
+    {% for uname, utype in prop_type.members.iteritems() %}
+    {% if no_implementation -%}
+        void set{{camel_case(prop_name)}}_{{camel_case(uname)}}(const {{platform.getType(utype)}} &value);
+    {% else -%}
+        void {% if withscope %}{{node.getNodeName}}::{%endif%}set{{camel_case(prop_name)}}_{{camel_case(uname)}}(const {{platform.getType(utype)}} &value)
+        {
+            this->{{prop_name}}.{{uname}} = value;
+        }
+    {%- endif %}
+    {% endfor %}
+{% else %}
+    {% if no_implementation -%}
+        void set{{camel_case(prop_name)}}(const {{platform.getType(prop_type)}} &value);
+    {% else -%}
+        void {% if withscope %}{{node.getNodeName}}::{%endif%}set{{camel_case(prop_name)}}(const {{platform.getType(prop_type)}} &value)
+        {
+            this->{{prop_name}} = value;
+        }
+    {% endif -%}
+{% endif -%}
+{%- endmacro %}
+
+{% macro camel_case(value) -%}{{value[0]|upper}}{{value[1:]}}{%- endmacro %}
+{% macro render_property_declaration(prop_type, prop_name) -%}
+{% if prop_type.__class__.__name__ == "UnionType" %}
+union {
+    {% for uname, utype in prop_type.members.iteritems() %}
+        {{platform.getType(utype)}} {{uname}};
+    {% endfor %}
+    } {{prop_name}};
+{% else %}
+{{platform.getType(prop_type)}} {{prop_name}};
+{% endif %}
+{%- endmacro %}

@@ -1,4 +1,6 @@
 
+{% import "cpp_common" as cpp_common with context %}
+
 #ifndef __{{backendConfig.NAMESPACE}}__GENERATED_AST_NODES_H__
 #define __{{backendConfig.NAMESPACE}}__GENERATED_AST_NODES_H__
 
@@ -24,17 +26,20 @@ typedef {{node.getNodeName()}} *{{node.getNodeName()}}Ptr; {% endfor %}
 class {{node.getNodeName()}} {% if node.getParentNode() %}: public {{ node.getParentNode() }}{% endif %}
 {
 public:
-    virtual ~{{node.getNodeName()}}();
-    {% for attrib, value in node.attributes.iteritems() %}
-    const {{backendConfig.getType(value)}} &get{{attrib[0]|upper}}{{attrib[1:]}}();
-    void set{{attrib[0]|upper}}{{attrib[1:]}}(const {{backendConfig.getType(value)}} &value);
+    {{ cpp_common.render_destructor(node) }}
+    {% for prop_name, prop_type in node.properties.iteritems() %}
+    {{ cpp_common.render_property_getter(prop_name, prop_type) }}
+    {{ cpp_common.render_property_setter(prop_name, prop_type) }}
     {% endfor %}
-{% if node.attributes %}
+{% if node.properties %}
+
 protected:
-    {% for attrib, value in node.attributes.iteritems() %}
-    {{backendConfig.getType(value)}} {{attrib}};{% endfor %}
+    {% for prop_name, prop_type in node.properties.iteritems() %}
+    {{ cpp_common.render_property_declaration(prop_type, prop_name)  }}
+    {% endfor %}
 {% endif %}
-};{% endfor %}
+};
+{% endfor %}
 
 {% if backendConfig.NAMESPACE %}
 }
@@ -45,3 +50,4 @@ protected:
 #endif
 
 #endif
+
