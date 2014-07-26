@@ -96,7 +96,10 @@ setup(name="astgen",
         "jinja2>=2.7"
       ],
       classifiers = [
-        'License :: OSI Approved :: BSD License',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
+        'Topic :: Software Development :: Code Generators',
+        'Topic :: Software Development :: Compilers',
       ]
       )
