@@ -1,5 +1,4 @@
 
-===================================================
 astgen - A tool for creating Abstract Syntaxt Trees
 ===================================================
 
@@ -9,23 +8,18 @@ of python classes which describe the methods and members of the AST classes spec
 and outputs language specific (so far Java and C++) classes with the definitions of the various
 AST classes.
 
-============
 Installation
 ============
 
-===============
 Getting Started
 ===============
 
-==========
 Models
 ==========
 
-=================
 Platform Backends
 =================
 
-================
 Layouts Backends
 ================
 
