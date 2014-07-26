@@ -11,7 +11,9 @@ enum class {{enumtype.enum_name}} {
 {% if no_implementation %}
     virtual ~{{node.getNodeName()}}();
 {% else -%}
+{% if not node.no_destructor -%}
     {% if withscope %}{{node.getNodeName()}}::{%else%}virtual {% endif %}~{{node.getNodeName()}}() { }
+{%- endif %}
 {%- endif %}
 {%- endmacro %}
 
