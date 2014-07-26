@@ -84,7 +84,7 @@ print "Datafiles: ", package_data
 
 setup(name="astgen",
       version=version.VERSION,
-      description="A generic code generators for AST for use in parsers.",
+      description="A generator for Abstract Syntax Trees.",
       long_description=long_description,
       author="Sri Panyam",
       author_email="sri.panyam@gmail.com",
