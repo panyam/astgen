@@ -11,6 +11,8 @@ class CPlusPlus(astgen.ASTPlatform):
             return typeobj.typename
         elif type(typeobj) is astgen.ListOf:
             return "std::list<%s>" % self.getType(typeobj.base_type)
+        elif type(typeobj) is astgen.MapOf:
+            return "std::hash_map<%s,%s>" % (self.getType(typeobj.key_type), self.getType(typeobj.value_type))
         elif type(typeobj) is astgen.EnumType:
             return typeobj.enum_name
         return str(typeobj)

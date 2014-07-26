@@ -37,10 +37,11 @@ def load_nodes_from_file(input_file):
 
 def load_template(template_path):
     from jinja2 import Environment, PackageLoader
-    if template_path.startswith("/"):
-        # use a loader that loads from absolute path
-        env = Environment(trim_blocks = True, lstrip_blocks = True)
-    else:
-        env = Environment(trim_blocks = True, lstrip_blocks = True, loader=PackageLoader('astgen', 'templates'))
+    kwargs = dict(trim_blocks = True,
+                  lstrip_blocks = True,
+                  extensions = [ "jinja2.ext.do" ])
+    if not template_path.startswith("/"):
+        kwargs["loader"] = PackageLoader("astgen", "templates")
+    env = Environment(**kwargs)
     return env.get_template(template_path)
 

@@ -9,16 +9,34 @@
 extern "C" {
 #endif
 
-{{backendConfig.PREAMBLE}}
+{{backendConfig.HEADER_PREAMBLE}}
 
 {% if backendConfig.NAMESPACE %}
 namespace {{backendConfig.NAMESPACE}} {
 {% endif %}
 
+{{backendConfig.NAMESPACE_PREAMBLE}}
+
 // Foward defs
+{% set enums = {} %}
 {% for node in nodes %}
 class {{node.getNodeName()}};
-typedef {{node.getNodeName()}} *{{node.getNodeName()}}Ptr; {% endfor %}
+typedef {{node.getNodeName()}} *{{node.getNodeName()}}Ptr;
+    {% for prop_name, prop_type in node.properties.iteritems() %}
+        {% if prop_type.__class__.__name__ == "EnumType" -%}
+            {% do enums.update({prop_type.enum_name: prop_type}) %}
+        {% endif -%}
+        {% if prop_type.__class__.__name__ == "ListOf" and prop_type.base_type.__class__.__name__ == "EnumType"-%}
+            {% do enums.update({prop_type.base_type.enum_name: prop_type.base_type}) %}
+        {% endif -%}
+    {% endfor %}
+{% endfor %}
+
+{% for enumname,enumtype in enums.iteritems() %}
+{{ cpp_common.render_enum(enumtype) }}
+{% endfor %}
+
+// Any Enums we need
 
 {% for node in nodes %}
 

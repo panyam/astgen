@@ -1,4 +1,11 @@
 
+{% macro render_enum(enumtype) -%}
+enum class {{enumtype.enum_name}} {
+    {% for m in enumtype.enum_vals %}
+    {{ m }},
+    {% endfor %}
+};
+{%- endmacro %}
 
 {% macro render_destructor(node, withscope = False) -%}
 {% if no_implementation %}
