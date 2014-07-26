@@ -1,4 +1,5 @@
 
+
 astgen - A tool for creating Abstract Syntaxt Trees
 ===================================================
 
@@ -53,3 +54,78 @@ Options:
                         Input model file containing AST definitions for which
                         AST code is to be generated.
 ```
+
+
+The MODEL_FILE and BACKEND_CONFIG parameters are mandatory while the Platform parameter defaults to C++ (ie outputs are C++ classes) and a two file layout is used where all node declarations are writen to the header (.h) file and the definitions are written to the implementation file (.cpp).
+
+Sample Usage
+------------
+
+To try out the calculator example:
+
+```
+cd samples/calculator
+astgen -m model.py -c config.py
+```
+
+This would now generate the files CalculatorAST.h and CalculatorAST.cpp.
+
+Models
+------
+
+Models define the structure of AST nodes that are to be generated.   A model looks similar to:
+
+```
+class NodeClass(ASTNode):
+    properties = dict(member1 = MemberType1,
+                      member2 = MemberType2,...)
+```
+
+Nodes can also inherit from other defined nodes, eg:
+
+```
+
+Operator = EnumType("Operator", "PLUS", "MINUS", "MUL", "DIV")
+
+class Expression(ASTNode): pass
+
+class BinaryExpression(Expresssion):
+    """
+    Has a binary operator and left and right sub expressions.
+    """
+    properties = dict(op = Operator, 
+                      lhs = "Expression",
+                      rhs = "Expression")
+
+class UnaryExpression(Expression):
+    """
+    Has a prefix operator and an expression
+    """
+    properties = dict(op = Operator, 
+                      child = "Expression")
+```
+
+Types will be discussed in next section.
+
+Types
+------
+
+In the Models section, nodes and properties were discussed.  Each property must have a type.  The type value of a property can be a String to be a reference to a value of another defined class (in the above case an "Expression") or it can be one of the following types:
+
+
+BasicType("type")
+
+EnumType(TypeName, EnumVal1, EnumVal2, EnumVal3....)
+
+PairOf(Type1, Type2)
+
+ListOf(BaseType)
+
+MapOf(KeyType, ValueType)
+
+
+License
+----
+
+MIT
+

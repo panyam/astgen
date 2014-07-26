@@ -4,7 +4,7 @@ import os, sys
 from astgen import astgen, utils
 from optparse import OptionParser
 
-DEFAULT_LAYOUT = "astgen.layouts.SingleFileLayout"
+DEFAULT_LAYOUT = "astgen.layouts.TwoFilesLayout"
 DEFAULT_PLATFORM = "astgen.platforms.CPlusPlus"
 
 def parse_options():
@@ -27,7 +27,7 @@ def parse_options():
     if not options.model_file:
         parser.error("Model file parameter is mandatory.")
     if not options.backend_config:
-        parser.error("Backend config paramater is mandatory.")
+        parser.error("Backend config file parameter is mandatory.")
     if not options.layout_backend:
         parser.error("""
         Backend parameter is mandatory.  Built in options are (you can provide your own):
@@ -52,9 +52,11 @@ if __name__ == "__main__":
 
     nodes = utils.load_nodes_from_file(options.model_file)
 
-    backend_config = utils.import_file(options.backend_config)
-    bd_keys = filter(lambda x: not x.startswith("__"), dir(backend_config))
-    backend_config = dict([(key, getattr(backend_config, key)) for key in bd_keys])
+    backend_config = {}
+    if options.backend_config:
+        backend_config = utils.import_file(options.backend_config)
+        bd_keys = filter(lambda x: not x.startswith("__"), dir(backend_config))
+        backend_config = dict([(key, getattr(backend_config, key)) for key in bd_keys])
 
     platform_backend = options.platform_backend.split(".")
     platformBackendClass = getattr(utils.import_module(".".join(platform_backend[:-1])), platform_backend[-1])
