@@ -8,10 +8,11 @@ namespace {{backendConfig.NAMESPACE}} {
 {% endif %}
 
 {% for node in nodes %}
-{{ render_destructor(node, true) }}
-{% for prop, value in node.properties.iteritems() %}
-    {{ cpp_common.render_property_getter(prop_name, prop_type, True) }}
-    {{ cpp_common.render_property_setter(prop_name, prop_type, True) }}
+{{ cpp_common.render_destructor(node, True) }}
+{% for prop_name, prop_type in node.properties.iteritems() %}
+    {{ cpp_common.render_property_getter(node, prop_name, prop_type, True) }}
+    {{ cpp_common.render_property_setter(node, prop_name, prop_type, True) }}
+{% endfor %}
 {% endfor %}
 
 {% if backendConfig.NAMESPACE %}

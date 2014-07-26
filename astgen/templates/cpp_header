@@ -1,4 +1,3 @@
-
 {% import "cpp_common" as cpp_common with context %}
 
 #ifndef __{{backendConfig.NAMESPACE}}__GENERATED_AST_NODES_H__
@@ -28,14 +27,14 @@ class {{node.getNodeName()}} {% if node.getParentNode() %}: public {{ node.getPa
 public:
     {{ cpp_common.render_destructor(node) }}
     {% for prop_name, prop_type in node.properties.iteritems() %}
-    {{ cpp_common.render_property_getter(prop_name, prop_type) }}
-    {{ cpp_common.render_property_setter(prop_name, prop_type) }}
+    {{ cpp_common.render_property_getter(node, prop_name, prop_type) }}
+    {{ cpp_common.render_property_setter(node, prop_name, prop_type) }}
     {% endfor %}
 {% if node.properties %}
 
 protected:
     {% for prop_name, prop_type in node.properties.iteritems() %}
-    {{ cpp_common.render_property_declaration(prop_type, prop_name)  }}
+    {{ cpp_common.render_property_declaration(node, prop_name, prop_type)  }}
     {% endfor %}
 {% endif %}
 };

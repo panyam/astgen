@@ -81,6 +81,6 @@ class TwoFilesLayout(astgen.ASTLayout):
                                                            no_implementation = True,
                                                            backendConfig = self.backendConfig))
         self.implementation_file.write(self.implementation_template.render(nodes = nodes,
-                                                                           backendConfig = self.backendConfig),
-                                                                           platform = self.platformBackend)
+                                                                           backendConfig = self.backendConfig,
+                                                                           platform = self.platformBackend))
 
