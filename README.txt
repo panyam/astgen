@@ -233,7 +233,62 @@ Layouts
 Regardless of the platform, there would be several ways to layout the generate nodes.  For instance, for C++ alone, the following (and several more) layouts are possible:
 
  - Monolith header file: A single .h file that would contain all class definitions along with their implementations.
- - Two files: Laid out as one header file (containing all the interface/class declarations) and an implementation file (containing all the class/implementation definitions).
+ - Two files: Broken down into one header file (containing all the interface/class declarations) and an implementation file (containing all the class/implementation definitions).
+ - One file per class: One single header file per class that contains both the interface as well as implementation.
+ - Two files per class: Each class with its own header and implementation files.
+
+There could be several other layouts depending on the needs of the project.  All these layouts inherit from the ASTLayout base.  The ASTLayout base has the following methods:
+
+```
+class ASTLayout(object):
+    """
+    Given an AST node generates the code for the node.  This can be used to 
+    generate AST code for different languages or platforms.
+    """
+
+    def orderNodes(self, nodes):
+        """
+        Called to order all nodes in any way as deemed necessary.
+        """
+        pass
+
+    def generationStarted(self, astnodes):
+        """
+        Called before starting node generation for any of the nodes.
+        """
+        pass
+
+    def generationFinished(self, astnodes):
+        """
+        Called after the code generation of all nodes has completed.
+        """
+        pass
+
+    def nodeStarted(self, node):
+        """
+        Called before the generation of code for a particular node.
+        """
+        pass
+
+    def renderNodes(self, nodes):
+        """
+        Called to render all nodes
+        """
+        pass
+
+    def renderNode(self, node):
+        """
+        Called to render a particular node.
+        """
+        pass
+
+    def nodeFinished(self, node):
+        """
+        Called after the generation of code for a particular node.
+        """
+        pass
+
+```
 
 License
 -------

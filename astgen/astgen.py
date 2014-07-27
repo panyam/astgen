@@ -64,8 +64,7 @@ class ASTLayout(object):
     generate AST code for different languages or platforms.
 
     The code generator needs to the following:
-    1. Resolve native types for the types we have specified in the input file
-    2. Resolve paths to files where output is to be written.  This is highly
+    1. Resolve paths to files where output is to be written.  This is highly
        language and framework specific.  It can range from: 
           a. everything going into a single file, eg:
               1. Individual C++ classes with implementation and interface in the .h file
@@ -78,7 +77,7 @@ class ASTLayout(object):
               1. eg as .java files or .py files
           d. each node having its own interface and implementation file, eg:
               1. eg as .h and .c/.cpp/.m respectively
-    3. Use the templates based on above options to generate the code.
+    2. Use the templates based on above options to generate the code.
     """
     def __init__(self, platformBackend, *args, **kwargs):
         self.platformBackend = platformBackend
