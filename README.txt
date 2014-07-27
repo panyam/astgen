@@ -1,5 +1,4 @@
 
-
 astgen - A tool for creating Abstract Syntaxt Trees
 ===================================================
 
@@ -110,22 +109,79 @@ Types will be discussed in next section.
 Types
 ------
 
-In the Models section, nodes and properties were discussed.  Each property must have a type.  The type value of a property can be a String to be a reference to a value of another defined class (in the above case an "Expression") or it can be one of the following types:
+In the Models section, nodes and properties were discussed.  Each property must have a type.  The type value of a property can be a String which indicates a reference to a value of another defined class (in the above case an "Expression") or it can be one of the following types:
 
 
-BasicType("type")
+#### BasicType("type")
 
-EnumType(TypeName, EnumVal1, EnumVal2, EnumVal3....)
+Defines a native type that is platform specific and will resolved by the PlatformBackend object.  For instance:
 
-PairOf(Type1, Type2)
+```
+Integer = BasicType("int")
+```
 
-ListOf(BaseType)
+defines a type called Integer which will is of type "int" and can be equal to an int variable in C/C++ or in Java.  
 
-MapOf(KeyType, ValueType)
+Note that this does not mean that only primitive types can be defined in this manner.  The use of BasicType is only a hint that the underlying type (and its string representation that is rendered in the final output) is determined by the PlatformBackend.  For a more complicated examle the following can also be defined:
 
+```
+PointListPtr = BasicType("PointListPtr")
+```
+
+and in return, this could be resolved to (in C++) as:
+
+```
+std::shared_ptr<std::list<Point>>
+```
+
+How these types are resolved will be discussed in the PlatformBackend section.
+
+#### EnumType(TypeName, EnumVal1, EnumVal2, EnumVal3....)
+
+Defines an Enum type similar to the following:
+
+```
+enum TypeName
+{
+    EnumVal1,
+    EnumVal2,
+    EnumVal3
+    ...
+}
+```
+
+#### PairOf(Type1, Type2, TypeName = '')
+
+Defines a Pair type over the given two sub types.  In C++ this would be similar to:
+
+```
+typedef std::pair<Type1, Type2> TypeName
+```
+
+If the TypeName is not specified, a name is automatically generated and used.
+
+#### ListOf(BaseType, TypeName = '')
+
+Defines a type that is the List of a BaseType typed values.  In C++ this would be similar to:
+
+```
+typedef std::list<Type1, Type2> TypeName
+```
+
+If the TypeName is not specified, a name is automatically generated and used.
+
+#### MapOf(KeyType, ValueType)
+
+
+Defines a type that is the Map with the key and value types given by KeyType and ValueType respectively.  In C++ this would be similar to:
+
+```
+typedef std::map<KeyType, ValueType> TypeName
+```
+
+If the TypeName is not specified, a name is automatically generated and used.
 
 License
 ----
 
 MIT
-
