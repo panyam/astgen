@@ -53,6 +53,11 @@ class ASTPlatform(object):
     def __init__(self, *args, **kwargs):
         self.backendConfig = kwargs.get("backendConfig") or {}
 
+    def getType(self, typeobj):
+        if type(typeobj) is astgen.BasicType:
+            return typeobj.typename
+        return str(typeobj)
+
 class ASTLayout(object):
     """
     Given an AST node generates the code for the node.  This can be used to 

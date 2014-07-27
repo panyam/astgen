@@ -1,6 +1,6 @@
 
-astgen - A tool for creating Abstract Syntaxt Trees
-===================================================
+astgen - A tool for generating Abstract Syntaxt Trees
+=====================================================
 
 Introduction
 ------------
@@ -106,6 +106,11 @@ class UnaryExpression(Expression):
 
 Types will be discussed in next section.
 
+Config
+------
+
+The config file (specified with the -c parameter) contains overrides and other data used by the various parts of astgen while generating the AST code.  The different parameters depend on the layout and platform backends used and will be described in the respective sections.
+
 Types
 ------
 
@@ -181,7 +186,57 @@ typedef std::map<KeyType, ValueType> TypeName
 
 If the TypeName is not specified, a name is automatically generated and used.
 
+Platforms
+---------
+
+The Platform objects are responsible for handling and delegating all concerns related to the specific platform the ASTs are being generated for (eg C++, Java etc).   For now a Platform object only provides one method:
+
+```
+def getType(self, typeobj): pass
+```
+
+This method is responsible for returning the string representation of a type object (eg those discussed in the Types section) specific to the platform.  To achieve the results above, the astgen.platforms.CPlusPlus backend looks like this:
+
+```
+class CPlusPlus(astgen.ASTPlatform):
+    def getType(self, typeobj):
+        if type(typeobj) is str:
+            return typeobj + "Ptr"
+        elif type(typeobj) is astgen.BasicType:
+            if typeobj.typename == "boolean": return "bool"
+            if typeobj.typename == "string": return "std::string"
+            return typeobj.typename
+        elif type(typeobj) is astgen.ListOf:
+            return "std::list<%s>" % self.getType(typeobj.base_type)
+        elif type(typeobj) is astgen.PairOf:
+            return "std::pair<%s,%s>" % (self.getType(typeobj.type1), self.getType(typeobj.type2))
+        elif type(typeobj) is astgen.MapOf:
+            return "std::map<%s,%s>" % (self.getType(typeobj.key_type), self.getType(typeobj.value_type))
+        elif type(typeobj) is astgen.EnumType:
+            return typeobj.enum_name
+        return super(CPlusPlus, self).getType(typeobj)
+```
+
+Custom platform backends can be provided to the astgen script with the -p parameter.
+
+Alternatively, it can be defined in the Config(.py) file itself.
+
+So far the following (hopefully self explanatory) platforms are defined:
+
+#### astgen.platforms.CPlusPlus
+
+#### astgen.platforms.Java
+
+Layouts
+-------
+
+Regardless of the platform, there would be several ways to layout the generate nodes.  For instance, for C++ alone, the following (and several more) layouts are possible:
+
+ - Monolith header file: A single .h file that would contain all class definitions along with their implementations.
+ - Two files: Laid out as one header file (containing all the interface/class declarations) and an implementation file (containing all the class/implementation definitions).
+
 License
-----
+-------
 
 MIT
+

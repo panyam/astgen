@@ -17,7 +17,7 @@ class CPlusPlus(astgen.ASTPlatform):
             return "std::map<%s,%s>" % (self.getType(typeobj.key_type), self.getType(typeobj.value_type))
         elif type(typeobj) is astgen.EnumType:
             return typeobj.enum_name
-        return str(typeobj)
+        return super(CPlusPlus, self).getType(typeobj)
 
 class Java(astgen.ASTPlatform):
     def getType(self, typeobj):

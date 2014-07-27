@@ -10,22 +10,26 @@ class RefTo(object):
     def __repr__(self): return str(self)
 
 class ListOf(object):
-    def __init__(self, base_type = None): self.base_type = base_type
+    def __init__(self, base_type = None, type_name = None):
+        self.base_type = base_type
+        self.type_name = type_name
     def __str__(self): return "[%s]" % str(self.base_type)
     def __repr__(self): return str(self)
 
 class PairOf(object):
-    def __init__(self, type1 = None, type2 = None):
+    def __init__(self, type1 = None, type2 = None, type_name = None):
         self.type1 = type1 
         self.type2 = type2
+        self.type_name = type_name
 
     def __str__(self): return "<%s,%s>" % (str(self.type1), str(self.type2))
     def __repr__(self): return str(self)
 
 class MapOf(object):
-    def __init__(self, key_type = None, value_type = None):
+    def __init__(self, key_type = None, value_type = None, type_name = None):
         self.key_type = key_type
         self.value_type = value_type
+        self.type_name = type_name
 
     def __str__(self): return "<%s,%s>" % (str(self.key_type), str(self.value_type))
     def __repr__(self): return str(self)
@@ -39,8 +43,9 @@ class EnumType(object):
     def __str__(self): return "[%s: %s]" % (self.enum_name, ",".join(self.enum_vals))
 
 class UnionType(object):
-    def __init__(self, **members):
+    def __init__(self, type_name = None, **members):
         self.members = members 
+        self.type_name = type_name
 
     def __repr__(self): return str(self)
     def __str__(self): return "{%s}" % (",".join(["%s = %s" % (k,v) for (k,v) in self.members.iteritems()]))
