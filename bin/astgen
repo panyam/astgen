@@ -4,7 +4,7 @@ import os, sys
 from astgen import astgen, utils
 from optparse import OptionParser
 
-DEFAULT_LAYOUT = "astgen.layouts.OneFileLayout"
+DEFAULT_LAYOUT = "astgen.layouts.TwoFilesLayout"
 DEFAULT_PLATFORM = "astgen.platforms.CPlusPlus"
 
 def parse_options():
