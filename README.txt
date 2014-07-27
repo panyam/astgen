@@ -64,7 +64,7 @@ To try out the calculator example:
 
 ```
 cd samples/calculator
-astgen -m model.py -c config.py
+astgen -m model.py -c cpp_config.py
 ```
 
 This would now generate the files CalculatorAST.h and CalculatorAST.cpp.
