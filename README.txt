@@ -252,13 +252,13 @@ class ASTLayout(object):
         """
         pass
 
-    def generationStarted(self, astnodes):
+    def generationStarted(self, nodes):
         """
         Called before starting node generation for any of the nodes.
         """
         pass
 
-    def generationFinished(self, astnodes):
+    def generationFinished(self, nodes):
         """
         Called after the code generation of all nodes has completed.
         """
@@ -290,8 +290,25 @@ class ASTLayout(object):
 
 ```
 
-License
--------
+Shown below are the laout classes that are defined so far (along with the parameters they accept in the config file):
 
-MIT
+##### astgen.layouts.OneFileLayout
+
+The monolithic one file layout where all class are declared and defined in the same file.  The following options in the config file are accepted:
+
+- HEADER_OUTPUT:    The output file to which all classes will be written to.
+- HEADER_TEMPLATE:  The (jinja2) template file that will be used to render all the classes (defaults to "cpp_header").
+
+##### astgen.layouts.TwoFilesLayout
+
+The two files layout where all class interface declarations are written to a header and implementations/definitions are written to an implementation file (eg .cpp, .m etc).  The following options in the config file are accepted:
+
+- HEADER_OUTPUT:            The output file to which all classes declarations will be written to.
+- HEADER_TEMPLATE:          The (jinja2) template file that will be used to render all the classes (defaults to "cpp_header").
+- IMPLEMENTATION_OUTPUT:    The output file to which all classes definitions/implementations will be written to.
+- IMPLEMENTATION_TEMPLATE:  The (jinja2) template file that will be used to render all the classes implementaitons/definitions (defaults to "cpp_implementation").
+
+##### astgen.layouts.OneFilePerNodeLayout
+
+##### astgen.layouts.TwoFilesPerNodeLayout
 

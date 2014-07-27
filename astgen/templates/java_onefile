@@ -1,0 +1,47 @@
+{% import "java_common" as java_common with context %}
+
+{% if backendConfig.JAVA_PACKAGE %}
+package {{backendConfig.JAVA_PACKAGE}};
+{% endif %}
+
+{{backendConfig.JAVA_IMPORTS}}
+
+// Foward defs
+{% set enums = {} %}
+{% for node in nodes %}
+    {% for prop_name, prop_type in node.properties.iteritems() %}
+        {% if prop_type.__class__.__name__ == "EnumType" -%}
+            {% do enums.update({prop_type.enum_name: prop_type}) %}
+        {% endif -%}
+        {% if prop_type.__class__.__name__ == "ListOf" and prop_type.base_type.__class__.__name__ == "EnumType"-%}
+            {% do enums.update({prop_type.base_type.enum_name: prop_type.base_type}) %}
+        {% endif -%}
+    {% endfor %}
+{% endfor %}
+
+public class {{backendConfig.JAVA_CLASS_NAME}}
+{
+    {{backendConfig.JAVA_CLASS_PREAMBLE}}
+    {{ java_common.render_pair_class(True) }}
+
+    // create all Enums
+    {% for enumname,enumtype in enums.iteritems() %}
+    {{ java_common.render_enum(enumtype, True) }}
+
+    {% endfor %}
+    {% for node in nodes %}
+    public static class {{node.getNodeName()}} {% if node.getParentNode() %} extends {{ node.getParentNode() }}{% endif %}
+    {
+        {% for prop_name, prop_type in node.properties.iteritems() %}
+        {{ java_common.render_property_getter(node, prop_name, prop_type) }}
+        {{ java_common.render_property_setter(node, prop_name, prop_type) }}
+        {% endfor %}
+    {% if node.properties %}
+        {% for prop_name, prop_type in node.properties.iteritems() %}
+        {{ java_common.render_property_declaration(node, prop_name, prop_type)  }}
+        {% endfor %}
+    {% endif %}
+    }
+    {% endfor %}
+}
+

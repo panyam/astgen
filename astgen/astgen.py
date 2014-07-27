@@ -54,7 +54,7 @@ class ASTPlatform(object):
         self.backendConfig = kwargs.get("backendConfig") or {}
 
     def getType(self, typeobj):
-        if type(typeobj) is astgen.BasicType:
+        if type(typeobj) is BasicType:
             return typeobj.typename
         return str(typeobj)
 
@@ -81,7 +81,6 @@ class ASTLayout(object):
     """
     def __init__(self, platformBackend, *args, **kwargs):
         self.platformBackend = platformBackend
-        print "Platform Backend 2: ", self.platformBackend
         self.backendConfig = kwargs.get("backendConfig") or {}
 
     def orderNodes(self, nodes):
@@ -104,8 +103,6 @@ class ASTLayout(object):
 
     def generateCode(self, astnodes):
         nodes = self.orderNodes(astnodes)
-        print "Transitive Closure of nodes:"
-        for node in nodes: print node
         self.generationStarted(astnodes)
         self.renderNodes(nodes)
         self.generationFinished(astnodes)

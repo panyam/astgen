@@ -5,9 +5,9 @@ DEFAULT_SINGLEFILE_TEMPLATE = "cpp_header"
 DEFAULT_TWOFILES_HEADER_TEMPLATE = DEFAULT_SINGLEFILE_TEMPLATE
 DEFAULT_TWOFILES_IMPLEMENTATION_TEMPLATE = "cpp_implementation"
 
-class SingleFileLayout(astgen.ASTLayout):
+class OneFileLayout(astgen.ASTLayout):
     """
-    This backend is used for langauges/frameworks where all the code related to *all* nodes
+    This layout is used for langauges/frameworks where all the code related to *all* nodes
     are outputted into a single file.
 
     Examples of this are:
@@ -16,7 +16,7 @@ class SingleFileLayout(astgen.ASTLayout):
     2. A single java class with inner classes for each specific node type.
     """
     def __init__(self, *args, **kwargs):
-        super(SingleFileLayout, self).__init__(*args, **kwargs)
+        super(OneFileLayout, self).__init__(*args, **kwargs)
         self.outputdir = kwargs.get("outdir") or "."
         self.outfileName = self.backendConfig.get("HEADER_OUTPUT") or None
         assert self.outfileName is not None, "HEADER_OUTPUT variable MUST be specified in the backend config.  This is the file to the generated code for all nodes will be written to."

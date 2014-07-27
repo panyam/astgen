@@ -4,7 +4,7 @@ import os, sys
 from astgen import astgen, utils
 from optparse import OptionParser
 
-DEFAULT_LAYOUT = "astgen.layouts.TwoFilesLayout"
+DEFAULT_LAYOUT = "astgen.layouts.OneFileLayout"
 DEFAULT_PLATFORM = "astgen.platforms.CPlusPlus"
 
 def parse_options():
@@ -32,8 +32,10 @@ def parse_options():
         parser.error("""
         Backend parameter is mandatory.  Built in options are (you can provide your own):
 
-        astgen.layouts.SingleFileLayout
+        astgen.layouts.OneFileLayout
         astgen.layouts.TwoFilesLayout
+        astgen.layouts.OneFilePerNodeLayout
+        astgen.layouts.TwoFilesPerNodeLayout
         """)
     if not options.platform_backend:
         parser.error("""
@@ -57,6 +59,8 @@ if __name__ == "__main__":
         backend_config = utils.import_file(options.backend_config)
         bd_keys = filter(lambda x: not x.startswith("__"), dir(backend_config))
         backend_config = dict([(key, getattr(backend_config, key)) for key in bd_keys])
+        options.layout_backend = backend_config.get("LAYOUT_BACKEND", None) or options.layout_backend
+        options.platform_backend = backend_config.get("PLATFORM_BACKEND", None) or options.platform_backend
 
     platform_backend = options.platform_backend.split(".")
     platformBackendClass = getattr(utils.import_module(".".join(platform_backend[:-1])), platform_backend[-1])
