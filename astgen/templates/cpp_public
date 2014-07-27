@@ -20,7 +20,7 @@ namespace {{backendConfig.NAMESPACE}} {
 
 // Foward defs
 {% set enums = {} %}
-{% for node in nodes %}
+{% for node in nodelist.nodes %}
 class {{node.getNodeName()}};
 typedef {{node.getNodeName()}} *{{node.getNodeName()}}Ptr;
 {% endfor %}

@@ -8,7 +8,7 @@ package {{backendConfig.JAVA_PACKAGE}};
 
 // Foward defs
 {% set enums = {} %}
-{% for node in nodes %}
+{% for node in nodelist.nodes %}
     {% for prop_name, prop_type in node.properties.iteritems() %}
         {% if prop_type.__class__.__name__ == "EnumType" -%}
             {% do enums.update({prop_type.enum_name: prop_type}) %}
@@ -29,7 +29,7 @@ public class {{backendConfig.JAVA_CLASS_NAME}}
     {{ java_common.render_enum(enumtype, True) }}
 
     {% endfor %}
-    {% for node in nodes %}
+    {% for node in nodelist.nodes %}
     public static class {{node.getNodeName()}} {% if node.getParentNode() %} extends {{ node.getParentNode() }}{% endif %}
     {
         {% for prop_name, prop_type in node.properties.iteritems() %}

@@ -1,14 +1,11 @@
 
 {% import "cpp_common" as cpp_common with context %}
 
-#ifndef __{{backendConfig.NAMESPACE}}__GENERATED_AST_NODES_FWDDEFS_H__
-#define __{{backendConfig.NAMESPACE}}__GENERATED_AST_NODES_FWDDEFS_H__
+{{ cpp_common.ifndef_define(backendConfig.NAMESPACE, "GENERATED_AST_NODES_FWDDEFS_H") }}
 
 {{backendConfig.INITIAL_HEADERS}}
 
-#if defined(_cplusplus) || defined(__cplusplus)
-extern "C" {
-#endif
+{{ cpp_common.extern_c }}
 
 {{backendConfig.HEADER_PREAMBLE}}
 
@@ -19,8 +16,7 @@ namespace {{backendConfig.NAMESPACE}} {
 {{backendConfig.NAMESPACE_PREAMBLE}}
 
 // Foward defs
-{% set enums = {} %}
-{% for node in nodes %}
+{% for node in nodelist.nodes %}
 class {{node.getNodeName()}};
 typedef {{node.getNodeName()}} *{{node.getNodeName()}}Ptr;
 {% endfor %}
@@ -29,9 +25,7 @@ typedef {{node.getNodeName()}} *{{node.getNodeName()}}Ptr;
 }
 {% endif %}
 
-#if defined(_cplusplus) || defined(__cplusplus)
-}
-#endif
+{{ cpp_common.extern_c_end }}
 
 #endif
 

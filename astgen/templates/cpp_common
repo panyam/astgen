@@ -1,4 +1,23 @@
 
+{% macro ifndef_define(prefix = '', suffix = '') -%}
+#ifndef __{{prefix}}__{{suffix}}__
+#define __{{prefix}}__{{suffix}}__
+{%- endmacro %}
+
+{% macro extern_c -%}
+#if defined(_cplusplus) || defined(__cplusplus)
+extern "C" {
+#endif
+{%- endmacro %}
+
+{% macro extern_c_end -%}
+#if defined(_cplusplus) || defined(__cplusplus)
+}
+#endif
+{%- endmacro %}
+
+{% macro ifndef_define(prefix = '', suffix = '') -%}
+
 {% macro render_enum(enumtype) -%}
 enum class {{enumtype.enum_name}} {
     {% for m in enumtype.enum_vals %}

@@ -44,6 +44,10 @@ class ASTNode(object):
     def getSettersFor(cls, prop):
         return []
 
+class ASTNodeList(object):
+    def __init__(self, *nodes):
+        self.nodes = nodes
+
 class ASTPlatform(object):
     """
     The platform backend takes care of all language and platform specific details 
@@ -84,7 +88,7 @@ class ASTLayout(object):
         self.backendConfig = kwargs.get("backendConfig") or {}
         self.outputdir = self.backendConfig.get("OUTPUT_DIR") or kwargs.get("outdir") or "."
 
-    def orderNodes(self, nodes):
+    def orderNodes(self, nodelist):
         """
         Given a bunch of nodes, sorts them so that their code is generated in this final order
         By default this orders nodes based on their parent dependancies.
@@ -98,23 +102,23 @@ class ASTLayout(object):
                 visit(node.__base__)
             out.append(node)
 
-        for node in nodes: visit(node)
+        for node in nodelist.nodes: visit(node)
 
         return out
 
-    def generateCode(self, astnodes):
-        nodes = self.orderNodes(astnodes)
-        self.generationStarted(astnodes)
-        self.renderNodes(nodes)
-        self.generationFinished(astnodes)
+    def generateCode(self, nodelist):
+        ordered_nodelist = ASTNodeList(self.orderNodes(nodelist))
+        self.generationStarted(nodelist)
+        self.renderNodes(ordered_nodelist)
+        self.generationFinished(nodelist)
 
-    def generationStarted(self, astnodes):
+    def generationStarted(self, nodelist):
         """
         Called before starting node generation for any of the nodes.
         """
         pass
 
-    def generationFinished(self, astnodes):
+    def generationFinished(self, nodelist):
         """
         Called after the code generation of all nodes has completed.
         """
@@ -126,8 +130,8 @@ class ASTLayout(object):
         """
         pass
 
-    def renderNodes(self, nodes):
-        for node in nodes:
+    def renderNodes(self, nodelist):
+        for node in nodelist.nodes:
             self.nodeStarted(node)
             self.renderNode(node)
             self.nodeFinished(node)

@@ -38,8 +38,8 @@ class OneFileLayout(astgen.ASTLayout):
         # write the "conclusion" after the nodes are generated
         self.outfile.close()
 
-    def renderNodes(self, nodes):
-        self.outfile.write(self.template.render(nodes = nodes,
+    def renderNodes(self, nodelist):
+        self.outfile.write(self.template.render(nodelist = nodelist,
                                                 backendConfig = self.backendConfig,
                                                 platform = self.platformBackend))
 
@@ -59,7 +59,7 @@ class TwoFilesLayout(astgen.ASTLayout):
         self.implementation_template = utils.load_template(self.implementationTemplateName)
 
 
-    def generationStarted(self, astnodes):
+    def generationStarted(self, nodelist):
         """
         Called before starting node generation for any of the nodes.
         """
@@ -68,7 +68,7 @@ class TwoFilesLayout(astgen.ASTLayout):
         self.header_file = open(self.header_filename, "w")
         self.implementation_file = open(self.implementation_filename, "w")
 
-    def generationFinished(self, astnodes):
+    def generationFinished(self, nodelist):
         """
         Called after the code generation of all nodes has completed.
         """
@@ -76,14 +76,18 @@ class TwoFilesLayout(astgen.ASTLayout):
         self.header_file.close()
         self.implementation_file.close()
 
-    def renderNodes(self, nodes):
-        self.header_file.write(self.header_template.render(nodes = nodes, 
+    def renderNodes(self, nodelist):
+        self.header_file.write(self.header_template.render(nodelist = nodelist, 
                                                            platform = self.platformBackend,
                                                            no_implementation = True,
                                                            backendConfig = self.backendConfig))
-        self.implementation_file.write(self.implementation_template.render(nodes = nodes,
+        self.implementation_file.write(self.implementation_template.render(nodelist = nodelist,
                                                                            backendConfig = self.backendConfig,
                                                                            platform = self.platformBackend))
+
+class OneFilePerNodeLayout(astgen.ASTLayout):
+    def __init__(self, *args, **kwargs):
+        super(OneFilePerNodeLayout, self).__init__(*args, **kwargs)
 
 class TwoFilesPerNodeLayout(astgen.ASTLayout):
     """
@@ -100,17 +104,20 @@ class TwoFilesPerNodeLayout(astgen.ASTLayout):
         self.fwddefs_template = utils.load_template(self.fwddefsTemplateName)
         self.public_template = utils.load_template(self.publicTemplateName)
 
-    def generationStarted(self, astnodes):
+    def generationStarted(self, nodelist):
         """
         Called before starting node generation for any of the nodes.
         """
+        # First create a single header file for all enums
+        # we *could* do this as one file per enum but its an overkill
+        # 
         # First create the "Fwds", "Enums" and "Main" header files
         print "Writing header to: ", self.header_filename
         print "Writing implementation to: ", self.implementation_filename
         self.header_file = open(self.header_filename, "w")
         self.implementation_file = open(self.implementation_filename, "w")
 
-    def generationFinished(self, astnodes):
+    def generationFinished(self, nodelist):
         """
         Called after the code generation of all nodes has completed.
         """
@@ -118,12 +125,12 @@ class TwoFilesPerNodeLayout(astgen.ASTLayout):
         self.header_file.close()
         self.implementation_file.close()
 
-    def renderNodes(self, nodes):
-        self.header_file.write(self.header_template.render(nodes = nodes, 
+    def renderNodes(self, nodelist):
+        self.header_file.write(self.header_template.render(nodelist = nodelist
                                                            platform = self.platformBackend,
                                                            no_implementation = True,
                                                            backendConfig = self.backendConfig))
-        self.implementation_file.write(self.implementation_template.render(nodes = nodes,
+        self.implementation_file.write(self.implementation_template.render(nodelist = nodelist,
                                                                            backendConfig = self.backendConfig,
                                                                            platform = self.platformBackend))
 

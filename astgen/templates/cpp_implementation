@@ -7,7 +7,7 @@
 namespace {{backendConfig.NAMESPACE}} {
 {% endif %}
 
-{% for node in nodes %}
+{% for node in nodelist.nodes %}
 {{ cpp_common.render_destructor(node, True) }}
 {% for prop_name, prop_type in node.properties.iteritems() %}
     {{ cpp_common.render_property_getter(node, prop_name, prop_type, True) }}
