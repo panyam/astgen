@@ -22,40 +22,22 @@ namespace {{backendConfig.NAMESPACE}} {
 {% for node in nodes %}
 class {{node.getNodeName()}};
 typedef {{node.getNodeName()}} *{{node.getNodeName()}}Ptr;
-    {% for prop_name, prop_type in node.properties.iteritems() %}
-        {% if prop_type.__class__.__name__ == "EnumType" -%}
-            {% do enums.update({prop_type.enum_name: prop_type}) %}
-        {% endif -%}
-        {% if prop_type.__class__.__name__ == "ListOf" and prop_type.base_type.__class__.__name__ == "EnumType"-%}
-            {% do enums.update({prop_type.base_type.enum_name: prop_type.base_type}) %}
-        {% endif -%}
-    {% endfor %}
+{% for prop_name, prop_type in node.properties.iteritems() %}
+    {% if prop_type.__class__.__name__ == "EnumType" -%}
+        {% do enums.update({prop_type.enum_name: prop_type}) %}
+    {% endif -%}
+    {% if prop_type.__class__.__name__ == "ListOf" and prop_type.base_type.__class__.__name__ == "EnumType"-%}
+        {% do enums.update({prop_type.base_type.enum_name: prop_type.base_type}) %}
+    {% endif -%}
+{% endfor %}
 {% endfor %}
 
 {% for enumname,enumtype in enums.iteritems() %}
 {{ cpp_common.render_enum(enumtype) }}
 {% endfor %}
 
-// Any Enums we need
-
 {% for node in nodes %}
-
-class {{node.getNodeName()}} {% if node.getParentNode() %}: public {{ node.getParentNode() }}{% endif %}
-{
-public:
-    {{ cpp_common.render_destructor(node) }}
-    {% for prop_name, prop_type in node.properties.iteritems() %}
-    {{ cpp_common.render_property_getter(node, prop_name, prop_type) }}
-    {{ cpp_common.render_property_setter(node, prop_name, prop_type) }}
-    {% endfor %}
-{% if node.properties %}
-
-protected:
-    {% for prop_name, prop_type in node.properties.iteritems() %}
-    {{ cpp_common.render_property_declaration(node, prop_name, prop_type)  }}
-    {% endfor %}
-{% endif %}
-};
+{{ cpp_common.render_node_class(node) }}
 {% endfor %}
 
 {% if backendConfig.NAMESPACE %}

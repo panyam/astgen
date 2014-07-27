@@ -82,6 +82,7 @@ class ASTLayout(object):
     def __init__(self, platformBackend, *args, **kwargs):
         self.platformBackend = platformBackend
         self.backendConfig = kwargs.get("backendConfig") or {}
+        self.outputdir = self.backendConfig.get("OUTPUT_DIR") or kwargs.get("outdir") or "."
 
     def orderNodes(self, nodes):
         """

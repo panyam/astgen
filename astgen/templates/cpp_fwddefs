@@ -1,0 +1,37 @@
+
+{% import "cpp_common" as cpp_common with context %}
+
+#ifndef __{{backendConfig.NAMESPACE}}__GENERATED_AST_NODES_FWDDEFS_H__
+#define __{{backendConfig.NAMESPACE}}__GENERATED_AST_NODES_FWDDEFS_H__
+
+{{backendConfig.INITIAL_HEADERS}}
+
+#if defined(_cplusplus) || defined(__cplusplus)
+extern "C" {
+#endif
+
+{{backendConfig.HEADER_PREAMBLE}}
+
+{% if backendConfig.NAMESPACE %}
+namespace {{backendConfig.NAMESPACE}} {
+{% endif %}
+
+{{backendConfig.NAMESPACE_PREAMBLE}}
+
+// Foward defs
+{% set enums = {} %}
+{% for node in nodes %}
+class {{node.getNodeName()}};
+typedef {{node.getNodeName()}} *{{node.getNodeName()}}Ptr;
+{% endfor %}
+
+{% if backendConfig.NAMESPACE %}
+}
+{% endif %}
+
+#if defined(_cplusplus) || defined(__cplusplus)
+}
+#endif
+
+#endif
+

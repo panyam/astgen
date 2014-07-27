@@ -4,6 +4,9 @@ import os, astgen, utils
 DEFAULT_SINGLEFILE_TEMPLATE = "cpp_header"
 DEFAULT_TWOFILES_HEADER_TEMPLATE = DEFAULT_SINGLEFILE_TEMPLATE
 DEFAULT_TWOFILES_IMPLEMENTATION_TEMPLATE = "cpp_implementation"
+DEFAULT_FWDDEFS_OUTPUT = "ForwardDefs.h"
+DEFAULT_PUBLIC_OUTPUT = "Public.h"
+DEFAULT_ENUMS_OUTPUT = "Enums.h"
 
 class OneFileLayout(astgen.ASTLayout):
     """
@@ -17,7 +20,6 @@ class OneFileLayout(astgen.ASTLayout):
     """
     def __init__(self, *args, **kwargs):
         super(OneFileLayout, self).__init__(*args, **kwargs)
-        self.outputdir = kwargs.get("outdir") or "."
         self.outfileName = self.backendConfig.get("HEADER_OUTPUT") or None
         assert self.outfileName is not None, "HEADER_OUTPUT variable MUST be specified in the backend config.  This is the file to the generated code for all nodes will be written to."
         self.templateName = self.backendConfig.get("HEADER_TEMPLATE") or DEFAULT_SINGLEFILE_TEMPLATE 
@@ -47,7 +49,6 @@ class TwoFilesLayout(astgen.ASTLayout):
     """
     def __init__(self, *args, **kwargs):
         super(TwoFilesLayout, self).__init__(*args, **kwargs)
-        self.outputdir = kwargs.get("outdir") or "."
         self.header_filename = self.backendConfig.get("HEADER_OUTPUT") or None
         self.implementation_filename = self.backendConfig.get("IMPLEMENTATION_OUTPUT") or None
         assert self.header_filename is not None, "HEADER_OUTPUT variable MUST be specified in the backend config.  This is the file to the generated header code for all nodes will be written to."
@@ -62,6 +63,48 @@ class TwoFilesLayout(astgen.ASTLayout):
         """
         Called before starting node generation for any of the nodes.
         """
+        print "Writing header to: ", self.header_filename
+        print "Writing implementation to: ", self.implementation_filename
+        self.header_file = open(self.header_filename, "w")
+        self.implementation_file = open(self.implementation_filename, "w")
+
+    def generationFinished(self, astnodes):
+        """
+        Called after the code generation of all nodes has completed.
+        """
+        # write the "conclusion" after the nodes are generated
+        self.header_file.close()
+        self.implementation_file.close()
+
+    def renderNodes(self, nodes):
+        self.header_file.write(self.header_template.render(nodes = nodes, 
+                                                           platform = self.platformBackend,
+                                                           no_implementation = True,
+                                                           backendConfig = self.backendConfig))
+        self.implementation_file.write(self.implementation_template.render(nodes = nodes,
+                                                                           backendConfig = self.backendConfig,
+                                                                           platform = self.platformBackend))
+
+class TwoFilesPerNodeLayout(astgen.ASTLayout):
+    """
+    This backend is used where there is a concept of a header/implementation seperation (eg C/C++/ObjC).
+    """
+    def __init__(self, *args, **kwargs):
+        super(TwoFilesPerNodeLayout, self).__init__(*args, **kwargs)
+        self.fwddefs_filename = self.backendConfig.get("FWDDEFS_OUTPUT", DEFAULT_FWDDEFS_OUTPUT)
+        self.public_filename = self.backendConfig.get("PUBLIC_OUTPUT", DEFAULT_PUBLIC_OUTPUT)
+
+        self.fwddefsTemplateName = self.backendConfig.get("FWDDEFS_TEMPLATE") or DEFAULT_FWDDEFS_TEMPLATE
+        self.publicTemplateName = self.backendConfig.get("PUBLIC_TEMPLATE") or DEFAULT_PUBLIC_TEMPLATE
+
+        self.fwddefs_template = utils.load_template(self.fwddefsTemplateName)
+        self.public_template = utils.load_template(self.publicTemplateName)
+
+    def generationStarted(self, astnodes):
+        """
+        Called before starting node generation for any of the nodes.
+        """
+        # First create the "Fwds", "Enums" and "Main" header files
         print "Writing header to: ", self.header_filename
         print "Writing implementation to: ", self.implementation_filename
         self.header_file = open(self.header_filename, "w")

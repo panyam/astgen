@@ -78,3 +78,23 @@ union {
 {{platform.getType(prop_type)}} {{prop_name}};
 {% endif %}
 {%- endmacro %}
+
+
+{% macro render_node_class(node) -%}
+class {{node.getNodeName()}} {% if node.getParentNode() %}: public {{ node.getParentNode() }}{% endif %}
+{
+public:
+    {{ render_destructor(node) }}
+    {% for prop_name, prop_type in node.properties.iteritems() %}
+    {{ render_property_getter(node, prop_name, prop_type) }}
+    {{ render_property_setter(node, prop_name, prop_type) }}
+    {% endfor %}
+{% if node.properties %}
+
+protected:
+    {% for prop_name, prop_type in node.properties.iteritems() %}
+    {{ render_property_declaration(node, prop_name, prop_type)  }}
+    {% endfor %}
+{% endif %}
+};
+{%- endmacro %}
