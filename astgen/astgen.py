@@ -46,7 +46,47 @@ class ASTNode(object):
 
 class ASTNodeList(object):
     def __init__(self, *nodes):
+        if len(nodes) == 1 and type(nodes[0]) is list:
+            nodes = nodes[0]
         self.nodes = nodes
+
+    def getAllBaseTypes(self):
+        """
+        Yields all base types used across all nodes.
+        This will exclude compound types such as Lists, Pairs and Maps.
+        """
+        visited = {}
+        stack = []
+        for node in self.nodes:
+            for prop_name, prop_type in node.properties.iteritems():
+                stack.append(prop_type)
+
+        while stack:
+            toptype = stack.pop()
+            if toptype.__class__ == ListOf:
+                stack.append(toptype.base_type)
+            elif toptype.__class__ == PairOf:
+                stack.append(toptype.type1)
+                stack.append(toptype.type2)
+            elif toptype.__class__ == MapOf:
+                stack.append(toptype.key_type)
+                stack.append(toptype.value_type)
+            elif toptype.__class__ == UnionType:
+                for mname, mtype in toptype.members.iteritems():
+                    stack.append(mtype)
+            elif toptype.__class__ == RefTo:
+                stack.append(toptype.ref_type)
+            else:
+                if toptype.__class__ == EnumType:
+                    if toptype.enum_name not in visited:
+                        visited[toptype.enum_name] = toptype
+                        yield toptype
+                elif toptype.__class__ == BasicType:
+                    if toptype.typename not in visited:
+                        visited[toptype.typename] = toptype
+                        yield toptype
+                else:
+                    assert False, "Invalid type: " + str(toptype)
 
 class ASTPlatform(object):
     """
@@ -88,7 +128,7 @@ class ASTLayout(object):
         self.backendConfig = kwargs.get("backendConfig") or {}
         self.outputdir = self.backendConfig.get("OUTPUT_DIR") or kwargs.get("outdir") or "."
 
-    def orderNodes(self, nodelist):
+    def orderNodes(self, nodes):
         """
         Given a bunch of nodes, sorts them so that their code is generated in this final order
         By default this orders nodes based on their parent dependancies.
@@ -102,12 +142,13 @@ class ASTLayout(object):
                 visit(node.__base__)
             out.append(node)
 
-        for node in nodelist.nodes: visit(node)
-
+        for node in nodes: visit(node)
         return out
 
     def generateCode(self, nodelist):
-        ordered_nodelist = ASTNodeList(self.orderNodes(nodelist))
+        if type(nodelist) is list:
+            nodelist = ASTNodeList(nodelist)
+        ordered_nodelist = ASTNodeList(self.orderNodes(nodelist.nodes))
         self.generationStarted(nodelist)
         self.renderNodes(ordered_nodelist)
         self.generationFinished(nodelist)

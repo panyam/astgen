@@ -4,9 +4,13 @@ import os, astgen, utils
 DEFAULT_SINGLEFILE_TEMPLATE = "cpp_header"
 DEFAULT_TWOFILES_HEADER_TEMPLATE = DEFAULT_SINGLEFILE_TEMPLATE
 DEFAULT_TWOFILES_IMPLEMENTATION_TEMPLATE = "cpp_implementation"
+
 DEFAULT_FWDDEFS_OUTPUT = "ForwardDefs.h"
 DEFAULT_PUBLIC_OUTPUT = "Public.h"
 DEFAULT_ENUMS_OUTPUT = "Enums.h"
+DEFAULT_FWDDEFS_TEMPLATE = "cpp_fwddefs"
+DEFAULT_PUBLIC_TEMPLATE = "cpp_public"
+DEFAULT_ENUMS_TEMPLATE = "cpp_enums"
 
 class OneFileLayout(astgen.ASTLayout):
     """
@@ -126,7 +130,7 @@ class TwoFilesPerNodeLayout(astgen.ASTLayout):
         self.implementation_file.close()
 
     def renderNodes(self, nodelist):
-        self.header_file.write(self.header_template.render(nodelist = nodelist
+        self.header_file.write(self.header_template.render(nodelist = nodelist,
                                                            platform = self.platformBackend,
                                                            no_implementation = True,
                                                            backendConfig = self.backendConfig))

@@ -5,7 +5,7 @@ class BasicType(object):
     def __repr__(self): return str(self)
 
 class RefTo(object):
-    def __init__(self, name): self.typename = name
+    def __init__(self, name): self.ref_type = name
     def __str__(self): return "(* %s)" % self.typename
     def __repr__(self): return str(self)
 
