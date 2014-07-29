@@ -4,19 +4,29 @@
 #define __{{prefix}}__{{suffix}}__
 {%- endmacro %}
 
-{% macro extern_c -%}
+{% macro start_externc() -%}
 #if defined(_cplusplus) || defined(__cplusplus)
 extern "C" {
 #endif
 {%- endmacro %}
 
-{% macro extern_c_end -%}
+{% macro end_externc() -%}
 #if defined(_cplusplus) || defined(__cplusplus)
 }
 #endif
 {%- endmacro %}
 
-{% macro ifndef_define(prefix = '', suffix = '') -%}
+{% macro start_namespace(ns) -%}
+{% if ns %}
+namespace {{ns}} {
+{% endif %}
+{%- endmacro %}
+
+{% macro end_namespace(ns) -%}
+{% if ns %}
+}
+{% endif %}
+{%- endmacro %}
 
 {% macro render_enum(enumtype) -%}
 enum class {{enumtype.enum_name}} {

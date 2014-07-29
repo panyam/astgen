@@ -3,9 +3,7 @@
 
 {{backendConfig.IMPLEMENTATION_PREAMBLE}}
 
-{% if backendConfig.NAMESPACE %}
-namespace {{backendConfig.NAMESPACE}} {
-{% endif %}
+{{ cpp_common.start_namespace(backendConfig.NAMESPACE) }}
 
 {% for node in nodelist.nodes %}
 {{ cpp_common.render_destructor(node, True) }}
@@ -15,7 +13,4 @@ namespace {{backendConfig.NAMESPACE}} {
 {% endfor %}
 {% endfor %}
 
-{% if backendConfig.NAMESPACE %}
-}
-{% endif %}
-
+{{ cpp_common.end_namespace(backendConfig.NAMESPACE) }}

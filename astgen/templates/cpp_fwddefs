@@ -1,18 +1,10 @@
-
 {% import "cpp_common" as cpp_common with context %}
 
 {{ cpp_common.ifndef_define(backendConfig.NAMESPACE, "GENERATED_AST_NODES_FWDDEFS_H") }}
-
 {{backendConfig.INITIAL_HEADERS}}
-
-{{ cpp_common.extern_c }}
-
+{{ cpp_common.start_externc() }}
 {{backendConfig.HEADER_PREAMBLE}}
-
-{% if backendConfig.NAMESPACE %}
-namespace {{backendConfig.NAMESPACE}} {
-{% endif %}
-
+{{ cpp_common.start_namespace(backendConfig.NAMESPACE) }}
 {{backendConfig.NAMESPACE_PREAMBLE}}
 
 // Foward defs
@@ -21,11 +13,8 @@ class {{node.getNodeName()}};
 typedef {{node.getNodeName()}} *{{node.getNodeName()}}Ptr;
 {% endfor %}
 
-{% if backendConfig.NAMESPACE %}
-}
-{% endif %}
-
-{{ cpp_common.extern_c_end }}
+{{ cpp_common.end_namespace(backendConfig.NAMESPACE) }}
+{{ cpp_common.end_externc() }}
 
 #endif
 

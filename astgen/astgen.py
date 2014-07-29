@@ -50,6 +50,11 @@ class ASTNodeList(object):
             nodes = nodes[0]
         self.nodes = nodes
 
+    def getAllEnumTypes(self):
+        for t in self.getAllBaseTypes():
+            if t.__class__ == EnumType:
+                yield t
+
     def getAllBaseTypes(self):
         """
         Yields all base types used across all nodes.
@@ -85,8 +90,6 @@ class ASTNodeList(object):
                     if toptype.typename not in visited:
                         visited[toptype.typename] = toptype
                         yield toptype
-                else:
-                    assert False, "Invalid type: " + str(toptype)
 
 class ASTPlatform(object):
     """
@@ -165,21 +168,23 @@ class ASTLayout(object):
         """
         pass
 
-    def nodeStarted(self, node):
-        """
-        Called before the generation of code for a particular node.
-        """
-        pass
-
     def renderNodes(self, nodelist):
         for node in nodelist.nodes:
             self.nodeStarted(node)
             self.renderNode(node)
             self.nodeFinished(node)
 
-    def renderNode(self, node):
-        print "Node Class: ", node.__class__, node.__class__.__name__, node.getNodeName(), node.getAllProperties()
+    def nodeStarted(self, node):
+        """
+        Called before the generation of code for a particular node.
+        """
         pass
+
+    def renderNode(self, node):
+        """
+        Called to render a particular node.
+        """
+        pass 
 
     def nodeFinished(self, node):
         """
