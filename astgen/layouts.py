@@ -143,8 +143,17 @@ class TwoFilesPerNodeLayout(astgen.ASTLayout):
                                                            backendConfig = self.backendConfig,
                                                            platform = self.platformBackend))
 
-    def getNodeHeaderFilename(self, node): return self.backendConfig["getNodeHeaderFilename"](node)
-    def getNodeImplFilename(self, node): return self.backendConfig["getNodeImplFilename"](node)
+    def getNodeHeaderFilename(self, node):
+        if "getNodeHeaderFilename" in self.backendConfig:
+            return self.backendConfig["getNodeHeaderFilename"](node)
+        else:
+            return node.getNodeName() + "_Header"
+
+    def getNodeImplFilename(self, node):
+        if "getNodeImplFilename" in self.backendConfig:
+            return self.backendConfig["getNodeImplFilename"](node)
+        else:
+            return node.getNodeName() + "_Impl"
 
     def generationFinished(self, nodelist):
         """
@@ -159,20 +168,25 @@ class TwoFilesPerNodeLayout(astgen.ASTLayout):
         Called before the generation of code for a particular node.
         """
         self.current_node = node
-        self.current_node_file = open(self.header_filename, "w")
-        print "Writing node to: ", self.current_node_file
+        self.node_header_file = open(self.getNodeHeaderFilename(node), "w")
+        self.node_impl_file = open(self.getNodeImplFilename(node), "w")
+        print "Writing node to: ", self.getNodeHeaderFilename(node), self.getNodeImplFilename(node)
 
     def renderNode(self, node):
-        print "Node Class: ", node.__class__, node.__class__.__name__, node.getNodeName(), node.getAllProperties()
-        self.current_node_file.write(self.impl_template.render(nodelist = nodelist,
-                                                               layout = self,
-                                                               backendConfig = self.backendConfig,
-                                                               platform = self.platformBackend))
+        self.node_header_file.write(self.node_header_template.render(node = node,
+                                                                     layout = self,
+                                                                     backendConfig = self.backendConfig,
+                                                                     platform = self.platformBackend))
+        self.node_impl_file.write(self.node_impl_template.render(node = node,
+                                                                 layout = self,
+                                                                 backendConfig = self.backendConfig,
+                                                                 platform = self.platformBackend))
 
     def nodeFinished(self, node):
         """
         Called after the generation of code for a particular node.
         """
-        self.current_node_file.close()
-        self.current_node = None
+        self.node_header_file.close()
+        self.node_impl_file.close()
+        self.node_header_file = self.node_impl_file = self.current_node = None
 

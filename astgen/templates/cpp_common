@@ -17,15 +17,11 @@ extern "C" {
 {%- endmacro %}
 
 {% macro start_namespace(ns) -%}
-{% if ns %}
-namespace {{ns}} {
-{% endif %}
+{% if ns %}namespace {{ns}} { {% endif %}
 {%- endmacro %}
 
 {% macro end_namespace(ns) -%}
-{% if ns %}
-}
-{% endif %}
+{% if ns %}} {% endif %}
 {%- endmacro %}
 
 {% macro render_enum(enumtype) -%}
