@@ -34,10 +34,10 @@ enum class {{enumtype.enum_name}} {
 
 {% macro render_destructor(node, withscope = False) -%}
 {% if no_implementation %}
-    virtual ~{{node.getNodeName()}}();
+    virtual ~{{node.nodeName()}}();
 {% else -%}
 {% if not node.no_destructor -%}
-    {% if withscope %}{{node.getNodeName()}}::{%else%}virtual {% endif %}~{{node.getNodeName()}}() { }
+    {% if withscope %}{{node.nodeName()}}::{%else%}virtual {% endif %}~{{node.nodeName()}}() { }
 {%- endif %}
 {%- endif %}
 {%- endmacro %}
@@ -46,9 +46,9 @@ enum class {{enumtype.enum_name}} {
 {% if prop_type.__class__.__name__ == "UnionType" -%}
     {% for uname, utype in prop_type.members.iteritems() %}
     {% if no_implementation -%}
-        const {{platform.getType(utype)}} &get{{camel_case(prop_name)}}_{{camel_case(uname)}}();
+        const {{platform.evalType(utype)}} &get{{camel_case(prop_name)}}_{{camel_case(uname)}}();
     {% else -%}
-        const {{platform.getType(utype)}} &{% if withscope %}{{node.getNodeName()}}::{%endif%}get{{camel_case(prop_name)}}_{{camel_case(uname)}}()
+        const {{platform.evalType(utype)}} &{% if withscope %}{{node.nodeName()}}::{%endif%}get{{camel_case(prop_name)}}_{{camel_case(uname)}}()
         {
             return this->{{prop_name}}.{{uname}};
         }
@@ -56,9 +56,9 @@ enum class {{enumtype.enum_name}} {
     {% endfor %}
 {% else %}
     {% if no_implementation -%}
-        const {{platform.getType(prop_type)}} &get{{camel_case(prop_name)}}();
+        const {{platform.evalType(prop_type)}} &get{{camel_case(prop_name)}}();
     {% else -%}
-        const {{platform.getType(prop_type)}} &{% if withscope %}{{node.getNodeName()}}::{%endif%}get{{camel_case(prop_name)}}()
+        const {{platform.evalType(prop_type)}} &{% if withscope %}{{node.nodeName()}}::{%endif%}get{{camel_case(prop_name)}}()
         {
             return this->{{prop_name}};
         }
@@ -70,9 +70,9 @@ enum class {{enumtype.enum_name}} {
 {% if prop_type.__class__.__name__ == "UnionType" -%}
     {% for uname, utype in prop_type.members.iteritems() %}
     {% if no_implementation -%}
-        void set{{camel_case(prop_name)}}_{{camel_case(uname)}}(const {{platform.getType(utype)}} &value);
+        void set{{camel_case(prop_name)}}_{{camel_case(uname)}}(const {{platform.evalType(utype)}} &value);
     {% else -%}
-        void {% if withscope %}{{node.getNodeName()}}::{%endif%}set{{camel_case(prop_name)}}_{{camel_case(uname)}}(const {{platform.getType(utype)}} &value)
+        void {% if withscope %}{{node.nodeName()}}::{%endif%}set{{camel_case(prop_name)}}_{{camel_case(uname)}}(const {{platform.evalType(utype)}} &value)
         {
             this->{{prop_name}}.{{uname}} = value;
         }
@@ -80,9 +80,9 @@ enum class {{enumtype.enum_name}} {
     {% endfor %}
 {% else %}
     {% if no_implementation -%}
-        void set{{camel_case(prop_name)}}(const {{platform.getType(prop_type)}} &value);
+        void set{{camel_case(prop_name)}}(const {{platform.evalType(prop_type)}} &value);
     {% else -%}
-        void {% if withscope %}{{node.getNodeName()}}::{%endif%}set{{camel_case(prop_name)}}(const {{platform.getType(prop_type)}} &value)
+        void {% if withscope %}{{node.nodeName()}}::{%endif%}set{{camel_case(prop_name)}}(const {{platform.evalType(prop_type)}} &value)
         {
             this->{{prop_name}} = value;
         }
@@ -96,17 +96,17 @@ enum class {{enumtype.enum_name}} {
 {% if prop_type.__class__.__name__ == "UnionType" %}
 union {
     {% for uname, utype in prop_type.members.iteritems() %}
-        {{platform.getType(utype)}} {{uname}};
+        {{platform.evalType(utype)}} {{uname}};
     {% endfor %}
     } {{prop_name}};
 {% else %}
-{{platform.getType(prop_type)}} {{prop_name}};
+{{platform.evalType(prop_type)}} {{prop_name}};
 {% endif %}
 {%- endmacro %}
 
 
 {% macro render_node_class(node) -%}
-class {{node.getNodeName()}} {% if node.getParentNode() %}: public {{ node.getParentNode() }}{% endif %}
+class {{node.nodeName()}} {% if node.parentNode() %}: public {{ node.parentNode() }}{% endif %}
 {
 public:
     {{ render_destructor(node) }}

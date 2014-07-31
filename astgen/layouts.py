@@ -37,7 +37,7 @@ class OneFileLayout(astgen.ASTLayout):
         """
         Called before starting node generation for any of the nodes.
         """
-        self.outfile = open(self.outfileName, "w")
+        self.outfile = self.openOutputFile(self.outfileName)
 
     def generationFinished(self, astnodes):
         """
@@ -73,9 +73,9 @@ class TwoFilesLayout(astgen.ASTLayout):
         Called before starting node generation for any of the nodes.
         """
         print "Writing header to: ", self.header_filename
-        self.header_file = open(self.header_filename, "w")
+        self.header_file = self.openOutputFile(self.header_filename)
         print "Writing impl to: ", self.impl_filename
-        self.impl_file = open(self.impl_filename, "w")
+        self.impl_file = self.openOutputFile(self.impl_filename)
 
     def generationFinished(self, nodelist):
         """
@@ -131,8 +131,8 @@ class TwoFilesPerNodeLayout(astgen.ASTLayout):
         print "Writing forward defs to: ", self.fwddefs_filename
         print "Writing public includes to: ", self.public_filename
 
-        self.fwddefs_file = open(self.fwddefs_filename, "w")
-        self.public_file = open(self.public_filename, "w")
+        self.fwddefs_file = self.openOutputFile(self.fwddefs_filename)
+        self.public_file = self.openOutputFile(self.public_filename)
 
         self.fwddefs_file.write(self.fwddefs_template.render(nodelist = nodelist,
                                                              layout = self,
@@ -143,17 +143,17 @@ class TwoFilesPerNodeLayout(astgen.ASTLayout):
                                                            backendConfig = self.backendConfig,
                                                            platform = self.platformBackend))
 
-    def getNodeHeaderFilename(self, node):
-        if "getNodeHeaderFilename" in self.backendConfig:
-            return self.backendConfig["getNodeHeaderFilename"](node)
+    def headerFilenameForNode(self, node):
+        if "headerFilenameForNode" in self.backendConfig:
+            return self.backendConfig["headerFilenameForNode"](node)
         else:
-            return node.getNodeName() + "_Header"
+            return node.nodeName() + "_Header"
 
-    def getNodeImplFilename(self, node):
-        if "getNodeImplFilename" in self.backendConfig:
-            return self.backendConfig["getNodeImplFilename"](node)
+    def implFilenameForNode(self, node):
+        if "implFilenameForNode" in self.backendConfig:
+            return self.backendConfig["implFilenameForNode"](node)
         else:
-            return node.getNodeName() + "_Impl"
+            return node.nodeName() + "_Impl"
 
     def generationFinished(self, nodelist):
         """
@@ -168,9 +168,9 @@ class TwoFilesPerNodeLayout(astgen.ASTLayout):
         Called before the generation of code for a particular node.
         """
         self.current_node = node
-        self.node_header_file = open(self.getNodeHeaderFilename(node), "w")
-        self.node_impl_file = open(self.getNodeImplFilename(node), "w")
-        print "Writing node to: ", self.getNodeHeaderFilename(node), self.getNodeImplFilename(node)
+        self.node_header_file = self.openOutputFile(self.headerFilenameForNode(node))
+        self.node_impl_file = self.openOutputFile(self.implFilenameForNode(node))
+        print "Writing node to: ", self.headerFilenameForNode(node), self.implFilenameForNode(node)
 
     def renderNode(self, node):
         self.node_header_file.write(self.node_header_template.render(node = node,

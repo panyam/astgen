@@ -30,7 +30,7 @@ public class {{backendConfig.JAVA_CLASS_NAME}}
 
     {% endfor %}
     {% for node in nodelist.nodes %}
-    public static class {{node.getNodeName()}} {% if node.getParentNode() %} extends {{ node.getParentNode() }}{% endif %}
+    public static class {{node.nodeName()}} {% if node.parentNode() %} extends {{ node.parentNode() }}{% endif %}
     {
         {% for prop_name, prop_type in node.properties.iteritems() %}
         {{ java_common.render_property_getter(node, prop_name, prop_type) }}

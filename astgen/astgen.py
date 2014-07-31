@@ -9,39 +9,39 @@ class ASTNode(object):
     properties = {}
 
     @classmethod
-    def getParentNode(cls):
+    def parentNode(cls):
         if issubclass(cls.__base__, ASTNode) and cls.__base__ is not ASTNode:
             return cls.__base__.__name__
         return None
 
     @classmethod
-    def getNodeName(cls):
-        cls.getAllProperties()
+    def nodeName(cls):
+        cls.allProperties()
         return cls.__property_table__["cls"]
 
     @classmethod
-    def getAllProperties(cls):
+    def allProperties(cls):
         if not hasattr(cls, "__property_table__") or cls.__property_table__["cls"] is not cls.__name__:
             cls.__property_table__ = {"cls": cls.__name__, "properties": {}}
-            if cls.__base__ and hasattr(cls.__base__, "getAllProperties"):
-                for key,value in cls.__base__.getAllProperties().iteritems():
+            if cls.__base__ and hasattr(cls.__base__, "allProperties"):
+                for key,value in cls.__base__.allProperties().iteritems():
                     cls.__property_table__["properties"][key] = value
             for key,value in cls.properties.iteritems():
                 cls.__property_table__["properties"][key] = value
         return cls.__property_table__["properties"]
 
     @classmethod
-    def getConstructors(cls):
+    def constructors(cls):
         return []
 
     @classmethod
-    def getGettersFor(cls, prop):
+    def gettersFor(cls, prop):
         # for a particular property the default getter would be:
         # of type const reference of the getter's value
         return []
 
     @classmethod
-    def getSettersFor(cls, prop):
+    def settersFor(cls, prop):
         return []
 
 class ASTNodeList(object):
@@ -50,12 +50,12 @@ class ASTNodeList(object):
             nodes = nodes[0]
         self.nodes = nodes
 
-    def getAllEnumTypes(self):
-        for t in self.getAllBaseTypes():
+    def allEnumTypes(self):
+        for t in self.allBaseTypes():
             if t.__class__ == EnumType:
                 yield t
 
-    def getAllBaseTypes(self):
+    def allBaseTypes(self):
         """
         Yields all base types used across all nodes.
         This will exclude compound types such as Lists, Pairs and Maps.
@@ -100,7 +100,7 @@ class ASTPlatform(object):
     def __init__(self, *args, **kwargs):
         self.backendConfig = kwargs.get("backendConfig") or {}
 
-    def getType(self, typeobj):
+    def evalType(self, typeobj):
         if type(typeobj) is BasicType:
             return typeobj.typename
         return str(typeobj)
@@ -191,4 +191,11 @@ class ASTLayout(object):
         Called after the generation of code for a particular node.
         """
         pass
+
+    def openOutputFile(self, filepath):
+        filepath = filepath.strip()
+        if filepath.startswith("/"):
+            return open(filepath, "w")
+        else:
+            return open(self.outputdir + "/" + filepath, "w")
 

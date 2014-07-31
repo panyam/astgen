@@ -7,7 +7,7 @@
 #include "{{layout.fwddefs_filename}}"
 {% endif %}
 {% for node in nodelist.nodes %}
-#include "{{layout.getNodeHeaderFilename(node)}}"
+#include "{{layout.headerFilenameForNode(node)}}"
 {% endfor %}
 
 #endif

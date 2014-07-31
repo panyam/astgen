@@ -192,14 +192,14 @@ Platforms
 The Platform objects are responsible for handling and delegating all concerns related to the specific platform the ASTs are being generated for (eg C++, Java etc).   For now a Platform object only provides one method:
 
 ```
-def getType(self, typeobj): pass
+def evalType(self, typeobj): pass
 ```
 
 This method is responsible for returning the string representation of a type object (eg those discussed in the Types section) specific to the platform.  To achieve the results above, the astgen.platforms.CPlusPlus backend looks like this:
 
 ```
 class CPlusPlus(astgen.ASTPlatform):
-    def getType(self, typeobj):
+    def evalType(self, typeobj):
         if type(typeobj) is str:
             return typeobj + "Ptr"
         elif type(typeobj) is astgen.BasicType:
@@ -207,14 +207,14 @@ class CPlusPlus(astgen.ASTPlatform):
             if typeobj.typename == "string": return "std::string"
             return typeobj.typename
         elif type(typeobj) is astgen.ListOf:
-            return "std::list<%s>" % self.getType(typeobj.base_type)
+            return "std::list<%s>" % self.evalType(typeobj.base_type)
         elif type(typeobj) is astgen.PairOf:
-            return "std::pair<%s,%s>" % (self.getType(typeobj.type1), self.getType(typeobj.type2))
+            return "std::pair<%s,%s>" % (self.evalType(typeobj.type1), self.evalType(typeobj.type2))
         elif type(typeobj) is astgen.MapOf:
-            return "std::map<%s,%s>" % (self.getType(typeobj.key_type), self.getType(typeobj.value_type))
+            return "std::map<%s,%s>" % (self.evalType(typeobj.key_type), self.evalType(typeobj.value_type))
         elif type(typeobj) is astgen.EnumType:
             return typeobj.enum_name
-        return super(CPlusPlus, self).getType(typeobj)
+        return super(CPlusPlus, self).evalType(typeobj)
 ```
 
 Custom platform backends can be provided to the astgen script with the -p parameter.

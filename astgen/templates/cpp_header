@@ -16,11 +16,11 @@ namespace {{backendConfig.NAMESPACE}} {
 
 // Foward defs
 {% for node in nodelist.nodes %}
-class {{node.getNodeName()}};
-typedef {{node.getNodeName()}} *{{node.getNodeName()}}Ptr;
+class {{node.nodeName()}};
+typedef {{node.nodeName()}} *{{node.nodeName()}}Ptr;
 {% endfor %}
 
-{% for enumtype in nodelist.getAllEnumTypes() %}
+{% for enumtype in nodelist.allEnumTypes() %}
 {{ cpp_common.render_enum(enumtype) }}
 {% endfor %}
 

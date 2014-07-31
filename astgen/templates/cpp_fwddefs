@@ -9,8 +9,8 @@
 
 // Foward defs
 {% for node in nodelist.nodes %}
-class {{node.getNodeName()}};
-typedef {{node.getNodeName()}} *{{node.getNodeName()}}Ptr;
+class {{node.nodeName()}};
+typedef {{node.nodeName()}} *{{node.nodeName()}}Ptr;
 {% endfor %}
 
 {{ cpp_common.end_namespace(backendConfig.NAMESPACE) }}

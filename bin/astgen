@@ -21,9 +21,9 @@ def parse_options():
                       help = "Input model file containing AST definitions for which AST code is to be generated.")
     (options, args) = parser.parse_args()
     options.outputdir = options.outputdir.strip()
-    if options.outputdir and otions.output.dir not in [".", "..", "./", "../"]:
+    if options.outputdir and options.outputdir not in [".", "..", "./", "../"]:
         if not os.path.isdir(options.outputdir):
-            os.path.makedirs(options.outputdir)
+            os.makedirs(options.outputdir)
     if not options.model_file:
         parser.error("Model file parameter is mandatory.")
     if not options.backend_config:
