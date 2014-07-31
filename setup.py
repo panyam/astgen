@@ -76,7 +76,7 @@ def findPackages(path, dataExclude=[]):
 # http://groups.google.com/group/comp.lang.python/browse_thread/thread/35ec7b2fed36eaec/2105ee4d9e8042cb
 # for scheme in INSTALL_SCHEMES.values(): scheme['data'] = scheme['purelib']
 
-long_description = file(os.path.join(pdir(), "README.txt")).read()
+long_description = file(os.path.join(pdir(), "README.md")).read()
 packages, package_data = findPackages("astgen")
 
 print "Packages: ", packages
