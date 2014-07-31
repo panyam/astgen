@@ -108,12 +108,15 @@ class TwoFilesPerNodeLayout(astgen.ASTLayout):
         super(TwoFilesPerNodeLayout, self).__init__(*args, **kwargs)
         self.fwddefs_filename = self.backendConfig.get("FWDDEFS_OUTPUT", DEFAULT_FWDDEFS_OUTPUT)
         self.public_filename = self.backendConfig.get("PUBLIC_OUTPUT", DEFAULT_PUBLIC_OUTPUT)
+        self.enums_filename = self.backendConfig.get("ENUMS_OUTPUT", DEFAULT_ENUMS_OUTPUT)
 
         self.fwddefs_template_path = self.backendConfig.get("FWDDEFS_TEMPLATE") or DEFAULT_FWDDEFS_TEMPLATE
         self.public_template_path = self.backendConfig.get("PUBLIC_TEMPLATE") or DEFAULT_PUBLIC_TEMPLATE
+        self.enums_template_path = self.backendConfig.get("ENUMS_TEMPLATE") or DEFAULT_ENUMS_TEMPLATE
 
         self.fwddefs_template = utils.load_template(self.fwddefs_template_path)
         self.public_template = utils.load_template(self.public_template_path)
+        self.enums_template = utils.load_template(self.enums_template_path)
 
         self.nodeHeader_template_path = self.backendConfig.get("NODE_HEADER_TEMPLATE", DEFAULT_TWOFILES_PER_NODE_HEADER_TEMPLATE)
         self.nodeImpl_template_path = self.backendConfig.get("IMPL_TEMPLATE", DEFAULT_TWOFILES_PER_NODE_IMPL_TEMPLATE)
@@ -130,9 +133,11 @@ class TwoFilesPerNodeLayout(astgen.ASTLayout):
         # First create the "Fwds", "Enums" and "Main" header files
         print "Writing forward defs to: ", self.fwddefs_filename
         print "Writing public includes to: ", self.public_filename
+        print "Writing enums includes to: ", self.enums_filename
 
         self.fwddefs_file = self.openOutputFile(self.fwddefs_filename)
         self.public_file = self.openOutputFile(self.public_filename)
+        self.enums_file = self.openOutputFile(self.enums_filename)
 
         self.fwddefs_file.write(self.fwddefs_template.render(nodelist = nodelist,
                                                              layout = self,
@@ -142,6 +147,10 @@ class TwoFilesPerNodeLayout(astgen.ASTLayout):
                                                            layout = self,
                                                            backendConfig = self.backendConfig,
                                                            platform = self.platformBackend))
+        self.enums_file.write(self.enums_template.render(nodelist = nodelist,
+                                                         layout = self,
+                                                         backendConfig = self.backendConfig,
+                                                         platform = self.platformBackend))
 
     def headerFilenameForNode(self, node):
         if "headerFilenameForNode" in self.backendConfig:
@@ -162,6 +171,7 @@ class TwoFilesPerNodeLayout(astgen.ASTLayout):
         # write the "conclusion" after the nodes are generated
         self.fwddefs_file.close()
         self.public_file.close()
+        self.enums_file.close()
 
     def nodeStarted(self, node):
         """
@@ -175,6 +185,7 @@ class TwoFilesPerNodeLayout(astgen.ASTLayout):
     def renderNode(self, node):
         self.node_header_file.write(self.node_header_template.render(node = node,
                                                                      layout = self,
+                                                                     no_impl = True,
                                                                      backendConfig = self.backendConfig,
                                                                      platform = self.platformBackend))
         self.node_impl_file.write(self.node_impl_template.render(node = node,

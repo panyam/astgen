@@ -2,7 +2,7 @@
 {{backendConfig.NODE_IMPLEMENTATION_PREAMBLE}}
 
 {%if layout.public_filename %}
-#include {{layout.public_filename}}"
+#include "{{layout.public_filename}}"
 {% endif %}
 
 {{ cpp_common.start_namespace(backendConfig.NAMESPACE) }}

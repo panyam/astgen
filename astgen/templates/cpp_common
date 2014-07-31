@@ -33,7 +33,7 @@ enum class {{enumtype.enum_name}} {
 {%- endmacro %}
 
 {% macro render_destructor(node, withscope = False) -%}
-{% if no_implementation %}
+{% if no_impl %}
     virtual ~{{node.nodeName()}}();
 {% else -%}
 {% if not node.no_destructor -%}
@@ -45,7 +45,7 @@ enum class {{enumtype.enum_name}} {
 {% macro render_property_getter(node, prop_name, prop_type, withscope = False) -%}
 {% if prop_type.__class__.__name__ == "UnionType" -%}
     {% for uname, utype in prop_type.members.iteritems() %}
-    {% if no_implementation -%}
+    {% if no_impl -%}
         const {{platform.evalType(utype)}} &get{{camel_case(prop_name)}}_{{camel_case(uname)}}();
     {% else -%}
         const {{platform.evalType(utype)}} &{% if withscope %}{{node.nodeName()}}::{%endif%}get{{camel_case(prop_name)}}_{{camel_case(uname)}}()
@@ -55,7 +55,7 @@ enum class {{enumtype.enum_name}} {
     {%- endif %}
     {% endfor %}
 {% else %}
-    {% if no_implementation -%}
+    {% if no_impl -%}
         const {{platform.evalType(prop_type)}} &get{{camel_case(prop_name)}}();
     {% else -%}
         const {{platform.evalType(prop_type)}} &{% if withscope %}{{node.nodeName()}}::{%endif%}get{{camel_case(prop_name)}}()
@@ -69,7 +69,7 @@ enum class {{enumtype.enum_name}} {
 {% macro render_property_setter(node, prop_name, prop_type, withscope = False) -%}
 {% if prop_type.__class__.__name__ == "UnionType" -%}
     {% for uname, utype in prop_type.members.iteritems() %}
-    {% if no_implementation -%}
+    {% if no_impl -%}
         void set{{camel_case(prop_name)}}_{{camel_case(uname)}}(const {{platform.evalType(utype)}} &value);
     {% else -%}
         void {% if withscope %}{{node.nodeName()}}::{%endif%}set{{camel_case(prop_name)}}_{{camel_case(uname)}}(const {{platform.evalType(utype)}} &value)
@@ -79,7 +79,7 @@ enum class {{enumtype.enum_name}} {
     {%- endif %}
     {% endfor %}
 {% else %}
-    {% if no_implementation -%}
+    {% if no_impl -%}
         void set{{camel_case(prop_name)}}(const {{platform.evalType(prop_type)}} &value);
     {% else -%}
         void {% if withscope %}{{node.nodeName()}}::{%endif%}set{{camel_case(prop_name)}}(const {{platform.evalType(prop_type)}} &value)
@@ -106,7 +106,7 @@ union {
 
 
 {% macro render_node_class(node) -%}
-class {{node.nodeName()}} {% if node.parentNode() %}: public {{ node.parentNode() }}{% endif %}
+class {{node.nodeName()}} {% if node.parent() %}: public {{ node.parent().nodeName() }}{% endif %}
 {
 public:
     {{ render_destructor(node) }}

@@ -2,6 +2,11 @@
 
 {{ cpp_common.ifndef_define(backendConfig.NAMESPACE, "GENERATED_AST_NODES_FWDDEFS_H") }}
 {{backendConfig.INITIAL_HEADERS}}
+
+{%if layout.enums_filename %}
+#include "{{layout.enums_filename}}"
+{% endif %}
+
 {{ cpp_common.start_externc() }}
 {{backendConfig.HEADER_PREAMBLE}}
 {{ cpp_common.start_namespace(backendConfig.NAMESPACE) }}

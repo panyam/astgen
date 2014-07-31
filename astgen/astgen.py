@@ -9,9 +9,9 @@ class ASTNode(object):
     properties = {}
 
     @classmethod
-    def parentNode(cls):
+    def parent(cls):
         if issubclass(cls.__base__, ASTNode) and cls.__base__ is not ASTNode:
-            return cls.__base__.__name__
+            return cls.__base__
         return None
 
     @classmethod

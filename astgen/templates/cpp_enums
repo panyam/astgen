@@ -1,0 +1,16 @@
+
+{% import "cpp_common" as cpp_common with context %}
+
+{{ cpp_common.ifndef_define(backendConfig.NAMESPACE, "GENERATED_AST_NODES_ENUMS_H") }}
+{{ cpp_common.start_externc() }}
+{{ cpp_common.start_namespace(backendConfig.NAMESPACE) }}
+
+{% for enumtype in nodelist.allEnumTypes() %}
+{{ cpp_common.render_enum(enumtype) }}
+{% endfor %}
+
+{{ cpp_common.end_namespace(backendConfig.NAMESPACE) }}
+{{ cpp_common.end_externc() }}
+
+#endif
+

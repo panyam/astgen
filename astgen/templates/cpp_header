@@ -4,7 +4,7 @@
 
 {{backendConfig.INITIAL_HEADERS}}
 
-{{ cpp_common.extern_c() }}
+{{ cpp_common.start_externc() }}
 
 {{backendConfig.HEADER_PREAMBLE}}
 
@@ -32,7 +32,7 @@ typedef {{node.nodeName()}} *{{node.nodeName()}}Ptr;
 }
 {% endif %}
 
-{{ cpp_common.extern_c_end() }}
+{{ cpp_common.end_externc() }}
 
 #endif
 

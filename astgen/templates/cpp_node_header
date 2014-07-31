@@ -3,8 +3,8 @@
 
 {{ cpp_common.ifndef_define(backendConfig.NAMESPACE, node.nodeName()) }}
 
-{% if node.parentNode() %}
-#include "{{ layout.nodeHeaderFilename(node.parentNode()) }}"
+{% if node.parent() %}
+#include "{{ layout.headerFilenameForNode(node.parent()) }}"
 {% else %}
 {%if layout.fwddefs_filename %}
 #include "{{layout.fwddefs_filename}}"
