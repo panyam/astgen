@@ -60,14 +60,15 @@ The MODEL_FILE and BACKEND_CONFIG parameters are mandatory while the Platform pa
 Sample Usage
 
 ------------
-To try out the calculator example:
+To try out the /alculator example:
 
 ```
 cd samples/calculator
-astgen -m model.py -c cpp_config.py
+astgen -o /tmp/calculator -m model.py -c cpp_config.py
 ```
 
-This would now generate the files CalculatorAST.h and CalculatorAST.cpp.
+This would now generate all the files for the various AST nodes
+associated with the sample in the folder /tmp/calculator
 
 Models
 ------
