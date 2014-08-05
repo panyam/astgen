@@ -10,11 +10,11 @@ class CPlusPlus(astgen.ASTPlatform):
             if typeobj.typename == "string": return "std::string"
             return typeobj.typename
         elif type(typeobj) is astgen.ListOf:
-            return "std::list<%s>" % self.evalType(typeobj.base_type)
+            return "std::list< %s >" % self.evalType(typeobj.base_type)
         elif type(typeobj) is astgen.PairOf:
-            return "std::pair<%s,%s>" % (self.evalType(typeobj.type1), self.evalType(typeobj.type2))
+            return "std::pair< %s,%s >" % (self.evalType(typeobj.type1), self.evalType(typeobj.type2))
         elif type(typeobj) is astgen.MapOf:
-            return "std::map<%s,%s>" % (self.evalType(typeobj.key_type), self.evalType(typeobj.value_type))
+            return "std::map< %s,%s >" % (self.evalType(typeobj.key_type), self.evalType(typeobj.value_type))
         elif type(typeobj) is astgen.EnumType:
             return typeobj.enum_name
         return super(CPlusPlus, self).evalType(typeobj)
