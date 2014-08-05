@@ -233,7 +233,7 @@ Layouts
 
 Regardless of the platform, there would be several ways to layout the generate nodes.  For instance, for C++ alone, the following (and several more) layouts are possible:
 
- - Monolith header file: A single .h file that would contain all class definitions along with their implementations.
+ - Monolithic header file: A single .h file that would contain all class definitions along with their implementations.
  - Two files: Broken down into one header file (containing all the interface/class declarations) and an implementation file (containing all the class/implementation definitions).
  - Two files per class: Each class with its own header and implementation files.
 
