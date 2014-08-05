@@ -93,7 +93,12 @@ enum class {{enumtype.enum_name}} {
     {% else -%}
         void {% if withscope %}{{node.nodeName()}}::{%endif%}set{{camel_case(prop_name)}}(const {{platform.evalType(prop_type)}} &value)
         {
+        {% if prop_type.__class__.__name__ == "ListOf" -%}
+            this->{{prop_name}}.clear();
+            std::copy(value.begin(), value.end(), back_inserter(this->{{prop_name}}));
+        {% else %}
             this->{{prop_name}} = value;
+        {%- endif %}
         }
     {% endif -%}
 {% endif -%}
