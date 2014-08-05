@@ -194,8 +194,7 @@ class ASTLayout(object):
 
     def openOutputFile(self, filepath):
         filepath = filepath.strip()
-        if filepath.startswith("/"):
-            return open(filepath, "w")
-        else:
-            return open(self.outputdir + "/" + filepath, "w")
+        if not filepath.startswith("/"):
+            filepath = self.outputdir + "/" + filepath
+        return open(filepath, "w")
 

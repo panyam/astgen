@@ -58,8 +58,8 @@ Options:
 The MODEL_FILE and BACKEND_CONFIG parameters are mandatory while the Platform parameter defaults to C++ (ie outputs are C++ classes) and a two file layout is used where all node declarations are writen to the header (.h) file and the definitions are written to the implementation file (.cpp).
 
 Sample Usage
-------------
 
+------------
 To try out the calculator example:
 
 ```
@@ -234,7 +234,6 @@ Regardless of the platform, there would be several ways to layout the generate n
 
  - Monolith header file: A single .h file that would contain all class definitions along with their implementations.
  - Two files: Broken down into one header file (containing all the interface/class declarations) and an implementation file (containing all the class/implementation definitions).
- - One file per class: One single header file per class that contains both the interface as well as implementation.
  - Two files per class: Each class with its own header and implementation files.
 
 There could be several other layouts depending on the needs of the project.  All these layouts inherit from the ASTLayout base.  The ASTLayout base has the following methods:
@@ -252,13 +251,13 @@ class ASTLayout(object):
         """
         pass
 
-    def generationStarted(self, nodes):
+    def generationStarted(self, nodelist):
         """
         Called before starting node generation for any of the nodes.
         """
         pass
 
-    def generationFinished(self, nodes):
+    def generationFinished(self, nodelist):
         """
         Called after the code generation of all nodes has completed.
         """
@@ -270,7 +269,7 @@ class ASTLayout(object):
         """
         pass
 
-    def renderNodes(self, nodes):
+    def renderNodes(self, nodelist):
         """
         Called to render all nodes
         """
