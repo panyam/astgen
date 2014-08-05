@@ -308,7 +308,26 @@ The two files layout where all class interface declarations are written to a hea
 - IMPLEMENTATION_OUTPUT:    The output file to which all classes definitions/implementations will be written to.
 - IMPLEMENTATION_TEMPLATE:  The (jinja2) template file that will be used to render all the classes implementaitons/definitions (defaults to "cpp_implementation").
 
-##### astgen.layouts.OneFilePerNodeLayout
-
 ##### astgen.layouts.TwoFilesPerNodeLayout
+
+In this layout, each node is written to its own file (typical
+<NodeName>.h and <NodeName.cpp>).  Additionally, a forward defs file, a
+public headers file and a header file for all enums is also generated.
+These are denoted by:
+
+- FWDDEFS_OUTPUT:           The output file to which all forward definitions are written (optional).
+- ENUMS_OUTPUT:             The output file to which all enums are written (optional).
+- PUBLIC_OUTPUT:            The output file to which all include headers are written to (optional).
+
+- FWDDEFS_TEMPLATE:         The (jinja2) template file thta will be used to render the forward definitions (if used).
+- ENUMS_TEMPLATE:           The (jinja2) template file thta will be used to render the enum definitions (if used).
+- PUBLIC_TEMPLATE:          The (jinja2) template file thta will be used to render the public header includes (if used).
+
+Note that the above are all optional and not required in all cases (for
+instance for Java none of the above are required).
+
+
+- HEADER_TEMPLATE:          The (jinja2) template file that will be used to render all the classes (defaults to "cpp_header").
+- IMPLEMENTATION_OUTPUT:    The output file to which all classes definitions/implementations will be written to.
+- IMPLEMENTATION_TEMPLATE:  The (jinja2) template file that will be used to render all the classes implementaitons/definitions (defaults to "cpp_implementation").
 
