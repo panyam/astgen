@@ -326,8 +326,3 @@ These are denoted by:
 Note that the above are all optional and not required in all cases (for
 instance for Java none of the above are required).
 
-
-- HEADER_TEMPLATE:          The (jinja2) template file that will be used to render all the classes (defaults to "cpp_header").
-- IMPLEMENTATION_OUTPUT:    The output file to which all classes definitions/implementations will be written to.
-- IMPLEMENTATION_TEMPLATE:  The (jinja2) template file that will be used to render all the classes implementaitons/definitions (defaults to "cpp_implementation").
-
