@@ -319,9 +319,9 @@ These are denoted by:
 - ENUMS_OUTPUT:             The output file to which all enums are written (optional).
 - PUBLIC_OUTPUT:            The output file to which all include headers are written to (optional).
 
-- FWDDEFS_TEMPLATE:         The (jinja2) template file thta will be used to render the forward definitions (if used).
-- ENUMS_TEMPLATE:           The (jinja2) template file thta will be used to render the enum definitions (if used).
-- PUBLIC_TEMPLATE:          The (jinja2) template file thta will be used to render the public header includes (if used).
+- FWDDEFS_TEMPLATE:         The (jinja2) template file that will be used to render the forward definitions (if used).
+- ENUMS_TEMPLATE:           The (jinja2) template file that will be used to render the enum definitions (if used).
+- PUBLIC_TEMPLATE:          The (jinja2) template file that will be used to render the public header includes (if used).
 
 Note that the above are all optional and not required in all cases (for
 instance for Java none of the above are required).
