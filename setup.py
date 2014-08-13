@@ -77,7 +77,6 @@ def findPackages(path, dataExclude=[]):
 # for scheme in INSTALL_SCHEMES.values(): scheme['data'] = scheme['purelib']
 
 print "PDIR: ", pdir(), os.listdir(pdir())
-long_description = file(os.path.join(pdir(), "README.md")).read()
 packages, package_data = findPackages("astgen")
 
 print "Packages: ", packages
@@ -86,7 +85,7 @@ print "Datafiles: ", package_data
 setup(name="astgen",
       version=version.VERSION,
       description="A generator for Abstract Syntax Trees.",
-      long_description=long_description,
+      long_description=file(os.path.join(pdir(), "README.md")).read(),
       author="Sri Panyam",
       author_email="sri.panyam@gmail.com",
       url="http://github.com/panyam/astgen/",
