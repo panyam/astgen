@@ -1,3 +1,4 @@
+import setuptools
 from distutils.core import setup
 import fnmatch, os.path
 from astgen import version
@@ -85,7 +86,7 @@ print("Datafiles: ", package_data)
 setup(name="astgen",
       version=version.VERSION,
       description="A generator for Abstract Syntax Trees.",
-      long_description=file(os.path.join(pdir(), "README.md")).read(),
+      long_description=open(os.path.join(pdir(), "README.md")).read(),
       author="Sri Panyam",
       author_email="sri.panyam@gmail.com",
       url="http://github.com/panyam/astgen/",
