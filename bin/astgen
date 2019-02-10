@@ -45,8 +45,8 @@ def parse_options():
         astgen.platforms.Java
         astgen.platforms.Python
         """)
-    print "Layout Backend: ", options.layout_backend
-    print "Platform Backend: ", options.platform_backend
+    print("Layout Backend: ", options.layout_backend)
+    print("Platform Backend: ", options.platform_backend)
     return options, args
 
 if __name__ == "__main__":

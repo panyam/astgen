@@ -76,11 +76,11 @@ def findPackages(path, dataExclude=[]):
 # http://groups.google.com/group/comp.lang.python/browse_thread/thread/35ec7b2fed36eaec/2105ee4d9e8042cb
 # for scheme in INSTALL_SCHEMES.values(): scheme['data'] = scheme['purelib']
 
-print "PDIR: ", pdir(), os.listdir(pdir())
+print("PDIR: ", pdir(), os.listdir(pdir()))
 packages, package_data = findPackages("astgen")
 
-print "Packages: ", packages
-print "Datafiles: ", package_data
+print("Packages: ", packages)
+print("Datafiles: ", package_data)
 
 setup(name="astgen",
       version=version.VERSION,

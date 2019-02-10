@@ -72,9 +72,9 @@ class TwoFilesLayout(astgen.ASTLayout):
         """
         Called before starting node generation for any of the nodes.
         """
-        print "Writing header to: ", self.header_filename
+        print("Writing header to: ", self.header_filename)
         self.header_file = self.openOutputFile(self.header_filename)
-        print "Writing impl to: ", self.impl_filename
+        print("Writing impl to: ", self.impl_filename)
         self.impl_file = self.openOutputFile(self.impl_filename)
 
     def generationFinished(self, nodelist):
@@ -131,9 +131,9 @@ class TwoFilesPerNodeLayout(astgen.ASTLayout):
         # we *could* do this as one file per enum but its an overkill
         # 
         # First create the "Fwds", "Enums" and "Main" header files
-        print "Writing forward defs to: ", self.fwddefs_filename
-        print "Writing public includes to: ", self.public_filename
-        print "Writing enums includes to: ", self.enums_filename
+        print("Writing forward defs to: ", self.fwddefs_filename)
+        print("Writing public includes to: ", self.public_filename)
+        print("Writing enums includes to: ", self.enums_filename)
 
         self.fwddefs_file = self.openOutputFile(self.fwddefs_filename)
         self.public_file = self.openOutputFile(self.public_filename)
@@ -180,7 +180,7 @@ class TwoFilesPerNodeLayout(astgen.ASTLayout):
         self.current_node = node
         self.node_header_file = self.openOutputFile(self.headerFilenameForNode(node))
         self.node_impl_file = self.openOutputFile(self.implFilenameForNode(node))
-        print "Writing node to: ", self.headerFilenameForNode(node), self.implFilenameForNode(node)
+        print("Writing node to: ", self.headerFilenameForNode(node), self.implFilenameForNode(node))
 
     def renderNode(self, node):
         self.node_header_file.write(self.node_header_template.render(node = node,
